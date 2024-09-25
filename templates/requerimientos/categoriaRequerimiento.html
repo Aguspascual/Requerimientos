@@ -6,6 +6,7 @@
                 <div class="card bg-light mb-2">
                     <h4 class="card-header">Registrar Categoria</h4>
                     <div class="card-body">
+                        <!--Registrar Categoria-->
                         <form action="/categoriaRequerimiento/registrar" method="post">
                             <div>
                                 <span>Tipo</span>
@@ -25,6 +26,7 @@
                                 <button type="submit" class="form-control btn btn-success">Agregar</button>
                             </div>
                         </form>
+                        <!--Fin registrar Categoria-->
                     </div>
                 </div>
             </div>
@@ -33,6 +35,7 @@
                     <input type="text" class="form-control" name="buscador" id="buscador" placeholder="Buscar Tipo de Requerimiento">
                 </div>
                 <div>
+                    <!--Tabla de categorias-->
                     <table class="table table-light mt-2" id="usuarios">
                         <thead>
                             <tr class="table-info">
@@ -95,10 +98,12 @@
                                         </div>
                                     </div>
                                 </td>
+                                <!--Fin modal ver-->
                             </tr>
                             {% endfor %}
                         </tbody>                        
                     </table>
+                    <!--Fin tabla de categorias-->
                 </div>
             </div>
         </div>
@@ -106,19 +111,18 @@
 </main>
  
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<!--Buscador de categorias-->
 <script>
-    // Write on keyup event of keyword input element
     $(document).ready(function(){
-    $("#buscador").keyup(function(){
-    _this = this;
-    // Show only matching TR, hide rest of them
-    $.each($("#usuarios tbody tr"), function() {
-    if($(this).text().toLowerCase().indexOf($(_this).val().toLowerCase()) === -1)
-    $(this).hide();
-    else
-    $(this).show();
+        $("#buscador").keyup(function(){
+            _this = this;
+            $.each($("#usuarios tbody tr"), function() {
+                if($(this).text().toLowerCase().indexOf($(_this).val().toLowerCase()) === -1)
+                    $(this).hide();
+                else
+                    $(this).show();
+            });
+        });
     });
-    });
-   });
 </script>
 {% include '/includes/pie.html' %}

@@ -13,6 +13,7 @@
         </div>
         <div class="row">
             <div class="col">
+                <!--Tabla de solicitudes a cargo-->
                 <table class="table" id="solicitudesAcargo">
                     <thead>
                         <tr class="table-light">
@@ -171,6 +172,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                <!--Fin modal ver-->
                                 <!-- Modal Eventos -->
                                 <div class="modal fade" id="modalEventos{{ requerimiento.id }}" tabindex="-1" aria-labelledby="modalEventosLabel{{ requerimiento.id }}" aria-hidden="true">
                                     <div class="modal-dialog">
@@ -194,43 +196,43 @@
                                                                             <p>Fecha: {{ evento.fechaYhora.strftime('%Y-%m-%d %H:%M') }}</p>
                                                                         <!--EMISION DE COMENTARIO-->
                                                                         {% elif evento.accion == "Emisión de Respuesta" %}
-                                                                        <h6>Comentario:</h6>
-                                                                        <div class="comentarios-container" style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 20px;">
-                                                                            <div class="list-group" id="comentariosContainer">
-                                                                                {% for comentario in comentarios %}
-                                                                                    {% if comentario.idRequerimiento == requerimiento.id %}
-                                                                                        {% if comentario.fechaYhora == evento.fechaYhora %}
-                                                                                            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                                                                                                <div class="d-flex w-100 justify-content-between">
-                                                                                                    <h5 class="mb-1">{{ comentario.asunto }}</h5>
-                                                                                                    <small class="text-muted">{{ comentario.fechaYhora.strftime('%Y-%m-%d %H:%M') }}</small>
-                                                                                                </div>
-                                                                                                <p class="mb-1">{{ comentario.descripcion }}</p>
-                                                                                                <small class="text-muted">Enviado por Usuario ID: 
-                                                                                                    {% for interno in internos %}
-                                                                                                        {% if interno.id == comentario.idUsuarioEmisor %}
-                                                                                                            {{ interno.nombre }}
-                                                                                                        {% endif %}
-                                                                                                    {% endfor %}
-                                                                                                </small>
-                                                                                            </a>
+                                                                            <h6>Comentario:</h6>
+                                                                            <div class="comentarios-container" style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 20px;">
+                                                                                <div class="list-group" id="comentariosContainer">
+                                                                                    {% for comentario in comentarios %}
+                                                                                        {% if comentario.idRequerimiento == requerimiento.id %}
+                                                                                            {% if comentario.fechaYhora == evento.fechaYhora %}
+                                                                                                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                                                                                                    <div class="d-flex w-100 justify-content-between">
+                                                                                                        <h5 class="mb-1">{{ comentario.asunto }}</h5>
+                                                                                                        <small class="text-muted">{{ comentario.fechaYhora.strftime('%Y-%m-%d %H:%M') }}</small>
+                                                                                                    </div>
+                                                                                                    <p class="mb-1">{{ comentario.descripcion }}</p>
+                                                                                                    <small class="text-muted">Enviado por Usuario ID: 
+                                                                                                        {% for interno in internos %}
+                                                                                                            {% if interno.id == comentario.idUsuarioEmisor %}
+                                                                                                                {{ interno.nombre }}
+                                                                                                            {% endif %}
+                                                                                                        {% endfor %}
+                                                                                                    </small>
+                                                                                                </a>
+                                                                                            {% endif %}
                                                                                         {% endif %}
-                                                                                    {% endif %}
-                                                                                {% endfor %}
+                                                                                    {% endfor %}
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
-                                                                        <form action="/comentario/registrar" method="POST">
-                                                                            <div class="mb-3">
-                                                                                <input type="number" name="idRequerimiento" value="{{requerimiento.id}}" hidden>
-                                                                                <label for="asunto" class="form-label">Asunto</label>
-                                                                                <input type="text" class="form-control" id="asunto" name="asunto" required>
-                                                                            </div>
-                                                                            <div class="mb-3">
-                                                                                <label for="descripcion" class="form-label">Descripción</label>
-                                                                                <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required></textarea>
-                                                                            </div>
-                                                                            <button type="submit" class="btn btn-primary">Agregar Comentario</button>
-                                                                        </form>
+                                                                            <form action="/comentario/registrar" method="POST">
+                                                                                <div class="mb-3">
+                                                                                    <input type="number" name="idRequerimiento" value="{{requerimiento.id}}" hidden>
+                                                                                    <label for="asunto" class="form-label">Asunto</label>
+                                                                                    <input type="text" class="form-control" id="asunto" name="asunto" required>
+                                                                                </div>
+                                                                                <div class="mb-3">
+                                                                                    <label for="descripcion" class="form-label">Descripción</label>
+                                                                                    <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required></textarea>
+                                                                                </div>
+                                                                                <button type="submit" class="btn btn-primary">Agregar Comentario</button>
+                                                                            </form>
                                                                         <!--ASIGNACION DE DESTINATARIO-->
                                                                         {% elif evento.accion == "Asignacion de Caso" %}
                                                                             {% for interno in internos %}
@@ -255,16 +257,18 @@
                                         </div>
                                     </div>
                                 </div>
+                                <!--Fin modal eventos-->
                             {% endif %}
                         {% endfor %}
                     </tbody>
                 </table>
+                <!--Fin tabla de solicitudes a cargo-->
             </div>
         </div>
     </div>
 </main>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!--Buscador-->
+<!--Buscador de requerimientos-->
 <script>
     $(document).ready(function() {
         $("#buscador").on("keyup", function() {
@@ -275,5 +279,4 @@
         });
     });
 </script>
-
 {% include '/includes/pie.html' %}

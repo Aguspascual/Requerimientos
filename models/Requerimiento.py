@@ -65,14 +65,6 @@ class Archivo(db.Model):
     def __init__(self, idRequerimiento, nombre):
         self.idRequerimiento = idRequerimiento
         self.nombre = nombre
-'''
-class Extension(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    nombre = db.Column(db.String(255))
-
-    def __init__(self, nombre):
-        self.nombre = nombre
-'''
 
 class Evento(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -105,12 +97,3 @@ class Comentario(db.Model):
         self.fechaYhora = fechaYhora
         self.idUsuarioEmisor = idUsuarioEmisor
         self.idEvento = idEvento
-
-class RequerimientoXusuario(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
-    idRequerimiento = db.Column(db.Integer)
-    idUsuario = db.Column(db.Integer)
-
-    def __init__(self, idRequerimiento, idUsuario):
-        self.idRequerimiento = idRequerimiento
-        self.idUsuario = idUsuario

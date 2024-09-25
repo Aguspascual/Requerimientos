@@ -4,7 +4,7 @@ from utils.db import db
 from routes.usuarios import usuarios
 from routes.usuariosInternos import usuariosInternos
 from routes.usuariosExternos import usuarioExterno
-from routes.requerimientos import requerimiento, categoriaRequerimiento, tipoRequerimiento, evento, comentario, archivo, requerimientoXusuario
+from routes.requerimientos import requerimiento, categoriaRequerimiento, tipoRequerimiento, evento, comentario, archivo
 from routes.auth import auth
 from config import Config
 
@@ -28,7 +28,6 @@ app.register_blueprint(tipoRequerimiento)
 app.register_blueprint(evento)
 app.register_blueprint(comentario)
 app.register_blueprint(archivo)
-app.register_blueprint(requerimientoXusuario)
 app.register_blueprint(auth)
 
 @app.route('/')

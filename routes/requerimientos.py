@@ -455,6 +455,3 @@ def descargar_archivo(filename):
         return send_from_directory(directorio_archivos, filename)
     except FileNotFoundError:
         abort(404)
-
-# Define el blueprint para REQUERIMIENTO X USUARIO
-requerimientoXusuario = Blueprint('requerimientoXusuario', __name__)

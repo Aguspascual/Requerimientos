@@ -13,6 +13,7 @@
         </div>
         <div class="row">
             <div class="col">
+                <!--Tabla con requerimientos del usuario-->
                 <table class="table" id="misSolicitudes">
                     <thead>
                         <tr class="table table-light">
@@ -51,7 +52,7 @@
                                 {% endfor %}
                             </td>
                             <td><button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalVer{{ requerimiento.id }}" data-id="{{ requerimiento.id }}">Historial</button></td>
-                            <!-- Modal Ver -->
+                            <!-- Modal Ver historial -->
                             <div class="modal fade" id="modalVer{{ requerimiento.id }}" tabindex="-1" aria-labelledby="modalVerLabel{{ requerimiento.id }}" aria-hidden="true">
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
@@ -161,15 +162,18 @@
                                     </div>
                                 </div>
                             </div>
+                            <!--Fin modal Ver historial-->
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
+                <!--Fin tabla con requerimientos del usuario-->
             </div>
         </div>
     </div>
 </main>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!--Buscador de requerimientos-->
 <script>
     $(document).ready(function() {
         $("#buscador").on("keyup", function() {
@@ -180,5 +184,4 @@
         });
     });
 </script>
-
 {% include '/includes/pie.html' %}

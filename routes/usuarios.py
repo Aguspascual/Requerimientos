@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, Blueprint, request, url_for, session
+from flask import Flask, render_template, redirect, Blueprint, url_for, session
 from models.UsuarioInterno import UsuarioInterno
 from models.UsuarioExterno import UsuarioExterno
 from utils.db import db

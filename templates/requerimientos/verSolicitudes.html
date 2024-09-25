@@ -7,6 +7,7 @@
             </div>
         </div>
         <div class="row mt-3">
+            <!--Filtros para tabla-->
             <div class="col-4">
                 <div class="form-group">
                     <label for="tipoFiltro">Tipo:</label>
@@ -39,10 +40,12 @@
                     </select>
                 </div>
             </div>
+            <!--Fin filtros para tabla-->
         </div>
 
         <div class="row mt-2">
             <div class="col">
+                <!--Tabla de solicitudes-->
                 <table class="table" id="solicitudes">
                     <thead>
                         <tr class="table-light">
@@ -59,54 +62,55 @@
                     </thead>
                     <tbody>
                         {% for requerimiento in requerimientos %}
-                        <tr>
-                            <td>{{ requerimiento.codigo }}</td>
-                            <td>{{ requerimiento.prioridad }}</td>
-                            <td>
-                                {% for tipoRequerimiento in tiposRequerimientos %}
-                                    {% if tipoRequerimiento.id == requerimiento.idTipoRequerimiento %}
-                                        {{ tipoRequerimiento.tipo }}
-                                    {% endif %}
-                                {% endfor %}
-                            </td>
-                            <td>
-                                {% for catRequerimiento in catRequerimientos %}
-                                    {% if catRequerimiento.id == requerimiento.idCategoriaRequerimiento %}
-                                        {{ catRequerimiento.descripcion }}
-                                    {% endif %}
-                                {% endfor %}
-                            </td>
-                            <td>{{ requerimiento.fechaYhora }}</td>
-                            <td>{{ requerimiento.estado }}</td>
-                            <td>{{ requerimiento.asunto }}</td>
-                            <td>
-                                {% if requerimiento.tipoEmisor == "Interno" %}
-                                    {% for interno in internos %}
-                                        {% if interno.id == requerimiento.idEmisor %}
-                                            {{ interno.nombre }}
+                            <tr>
+                                <td>{{ requerimiento.codigo }}</td>
+                                <td>{{ requerimiento.prioridad }}</td>
+                                <td>
+                                    {% for tipoRequerimiento in tiposRequerimientos %}
+                                        {% if tipoRequerimiento.id == requerimiento.idTipoRequerimiento %}
+                                            {{ tipoRequerimiento.tipo }}
                                         {% endif %}
                                     {% endfor %}
-                                {% else %}
-                                    {% for externo in externos %}
-                                        {% if externo.id == requerimiento.idEmisor %}
-                                            {{ externo.nombre }}
+                                </td>
+                                <td>
+                                    {% for catRequerimiento in catRequerimientos %}
+                                        {% if catRequerimiento.id == requerimiento.idCategoriaRequerimiento %}
+                                            {{ catRequerimiento.descripcion }}
                                         {% endif %}
                                     {% endfor %}
-                                {% endif %}
-                            </td>
-                            <td>{{ requerimiento.tipoEmisor }}</td>
-                        </tr>
+                                </td>
+                                <td>{{ requerimiento.fechaYhora }}</td>
+                                <td>{{ requerimiento.estado }}</td>
+                                <td>{{ requerimiento.asunto }}</td>
+                                <td>
+                                    {% if requerimiento.tipoEmisor == "Interno" %}
+                                        {% for interno in internos %}
+                                            {% if interno.id == requerimiento.idEmisor %}
+                                                {{ interno.nombre }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        {% for externo in externos %}
+                                            {% if externo.id == requerimiento.idEmisor %}
+                                                {{ externo.nombre }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                </td>
+                                <td>{{ requerimiento.tipoEmisor }}</td>
+                            </tr>
                         {% endfor %}
                     </tbody>
                 </table>
+                <!--Fin tabla de solicitudes-->
             </div>
         </div>
     </div>
 </main>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Función de buscar -->
 <script>
+    //Buscador de Solicitudes
     $(document).ready(function() {
         $('#buscador').on('keyup', function() {
             var inputValue = $(this).val().toLowerCase();
@@ -157,6 +161,4 @@
         $('#categoriaFiltro, #estadoFiltro').on('change', filtrarTabla);
     });
 </script>
-
-
 {% include '/includes/pie.html' %}

@@ -6,6 +6,7 @@
                 <div class="card bg-light text-center">
                     <div class="card-header"><h4 class="card-title">CREAR REQUERIMIENTO</h4></div>
                     <div class="card-body">
+                        <!--Crear requerimiento-->
                         <form action="/requerimiento/registrar" method="post" enctype="multipart/form-data">
                             <div class="container">
                                 <div class="row">
@@ -20,7 +21,7 @@
                                     </div>
                                     <div class="col-4">
                                         <span>Categoria de Requerimiento</span>
-                                        <select class="form-select" id="categoriaSelect" name="idCategoria">
+                                        <select class="form-select" id="categoriaSelect" name="idCategoria" required>
                                             <option value="None" hidden>Seleccionar categoria</option>
                                             {% for categoria in categoriasRequerimientos %}
                                                 <option value="{{ categoria.id }}" data-tipo="{{ categoria.idTipo }}">{{ categoria.descripcion }}</option>
@@ -29,7 +30,7 @@
                                     </div>
                                     <div class="col-4">
                                         <span>Prioridad</span>
-                                        <select class="form-select" name="prioridad">
+                                        <select class="form-select" name="prioridad" required>
                                             <option hidden>Seleccionar Prioridad</option>
                                             <option>Urgente</option>
                                             <option>Alta</option>
@@ -55,7 +56,7 @@
                                 <div class="col-6">
                                     <span>Ingresar Archivos</span>
                                     <div class="form-control">
-                                        <input type="file" id="archivos" name="archivos" accept=".doc,.docx,.xls,.xlsx,.pdf" multiple required>
+                                        <input type="file" id="archivos" name="archivos" accept=".doc,.docx,.xls,.xlsx,.pdf" multiple>
                                         <small id="fileHelp" class="form-text text-muted">Se permiten hasta 5 archivos en formatos Word, Excel y PDF.</small>
                                         <div id="fileWarning" class="text-danger mt-2" style="display: none;"></div>
                                     </div>
@@ -65,7 +66,7 @@
                                 <div class="col">
                                     <div>
                                         <label class="form-label mt-4">Asunto</label>
-                                        <textarea class="form-control" name="asunto" rows="3" maxlength="50" style="height: 88px;" placeholder="Asunto.."></textarea>
+                                        <textarea class="form-control" name="asunto" rows="2" maxlength="50" style="height: 88px; resize: none;" placeholder="Asunto.." required></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -73,7 +74,7 @@
                                 <div class="col">
                                     <div>
                                         <label class="form-label mt-4">Descripcion</label>
-                                        <textarea class="form-control" name="descripcion" rows="3" maxlength="5000" style="min-height: 88px; max-height: 200px;" placeholder="Descripcion.."></textarea>
+                                        <textarea class="form-control" name="descripcion" rows="3" maxlength="5000" style="min-height: 88px; max-height: 200px; resize: none;" placeholder="Descripcion.." required></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -105,6 +106,7 @@
                                 <button type="submit" class="form-control btn btn-success mt-1">Agregar</button>
                             </div>
                         </form>
+                        <!--Fin crear requerimiento-->
                     </div>
                 </div>
             </div>
@@ -117,20 +119,14 @@
     document.getElementById('tipoSelect').addEventListener('change', function() {
         var tipoSeleccionado = this.value;
         var categorias = document.getElementById('categoriaSelect').options;
-        
-        // Mostrar todas las opciones nuevamente
         for (var i = 0; i < categorias.length; i++) {
             var tipoCategoria = categorias[i].getAttribute('data-tipo');
-            
-            // Mostrar solo las categorías que coinciden con el tipo seleccionado
             if (tipoCategoria === tipoSeleccionado) {
                 categorias[i].style.display = 'block';
             } else {
                 categorias[i].style.display = 'none';
             }
         }
-        
-        // Restablecer el valor del select de categoría
         document.getElementById('categoriaSelect').value = "";
     });
 </script>
@@ -141,7 +137,6 @@
             var inputValue = $(this).val().toLowerCase();
             $('#resultadoUsuarios option').each(function() {
                 var optionText = $(this).text().toLowerCase();
-                // Mostrar solo las opciones que coincidan con el valor del input
                 if (optionText.includes(inputValue)) {
                     $(this).show();
                 } else {
@@ -158,7 +153,6 @@
             var inputValue = $(this).val().toLowerCase();
             $('#resultadoRequerimientos option').each(function() {
                 var optionText = $(this).text().toLowerCase();
-                // Mostrar solo las opciones que coincidan con el valor del input
                 if (optionText.includes(inputValue)) {
                     $(this).show();
                 } else {
@@ -171,33 +165,28 @@
 <!--Subidad de imagenes-->
 <script>
     $(document).ready(function() {
-    $('#archivos').on('change', function() {
-        const archivos = $(this).get(0).files;
-        const fileWarning = $('#fileWarning');
-        fileWarning.hide();  // Ocultar advertencias anteriores
-
-        // Verificar número de archivos
-        if (archivos.length > 5) {
-            fileWarning.text("Solo se permiten hasta 5 archivos.").show();
-            $(this).val('');  // Limpiar el campo si excede el límite
-            return;
-        }
-
-        // Verificar formatos
-        let valid = true;
-        $.each(archivos, function(index, archivo) {
-            const extension = archivo.name.split('.').pop().toLowerCase();
-            if (!['doc', 'docx', 'xls', 'xlsx', 'pdf'].includes(extension)) {
-                valid = false;
-                return false;  // Romper el loop si se encuentra un archivo inválido
+        $('#archivos').on('change', function() {
+            const archivos = $(this).get(0).files;
+            const fileWarning = $('#fileWarning');
+            fileWarning.hide();
+            if (archivos.length > 5) {
+                fileWarning.text("Solo se permiten hasta 5 archivos.").show();
+                $(this).val('');
+                return;
+            }
+            let valid = true;
+            $.each(archivos, function(index, archivo) {
+                const extension = archivo.name.split('.').pop().toLowerCase();
+                if (!['doc', 'docx', 'xls', 'xlsx', 'pdf'].includes(extension)) {
+                    valid = false;
+                    return false;
+                }
+            });
+            if (!valid) {
+                fileWarning.text("Formato de archivo no válido. Solo se permiten archivos Word, Excel y PDF.").show();
+                $(this).val('');
             }
         });
-
-        if (!valid) {
-            fileWarning.text("Formato de archivo no válido. Solo se permiten archivos Word, Excel y PDF.").show();
-            $(this).val('');  // Limpiar el campo
-        }
     });
-});
 </script>
 {% include '/includes/pie.html' %}

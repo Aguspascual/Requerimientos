@@ -87,4 +87,4 @@ def logout():
     session.clear()
 
     # Redirigir a la página de inicio o login
-    return redirect(url_for('auth.indexLogin'))  # Redirige a la ruta de login o a otra ruta
+    return redirect(url_for('auth.indexLogin'))
