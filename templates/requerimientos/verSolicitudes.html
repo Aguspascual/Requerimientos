@@ -1,0 +1,162 @@
+{% include '/includes/cabecera.html' %}
+<main>
+    <div class="container">
+        <div class="row mt-3">
+            <div class="col">
+                <input class="form-control" type="text" id="buscador" placeholder="Escribe para buscar un requerimiento..">
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-4">
+                <div class="form-group">
+                    <label for="tipoFiltro">Tipo:</label>
+                    <select class="form-control" id="tipoFiltro">
+                        <option value="">Todos los Tipos</option>
+                        {% for tipoRequerimiento in tiposRequerimientos %}
+                            <option value="{{ tipoRequerimiento.tipo }}">{{ tipoRequerimiento.tipo }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-group">
+                    <label for="categoriaFiltro">Categoría:</label>
+                    <select class="form-control" id="categoriaFiltro">
+                        <option value="">Todas las Categorías</option>
+                        {% for catRequerimiento in catRequerimientos %}
+                            <option value="{{ catRequerimiento.descripcion }}" data-tipo="{{ catRequerimiento.tipo }}">{{ catRequerimiento.descripcion }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-group">
+                    <label for="estadoFiltro">Estado:</label>
+                    <select class="form-control" id="estadoFiltro">
+                        <option value="">Todos los Estados</option>
+                        <option value="Abierto">Abierto</option>
+                        <option value="Cerrado">Cerrado</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-2">
+            <div class="col">
+                <table class="table" id="solicitudes">
+                    <thead>
+                        <tr class="table-light">
+                            <th>Código</th>
+                            <th>Prioridad</th>
+                            <th>Tipo</th>
+                            <th>Categoría</th>
+                            <th>Fecha de alta</th>
+                            <th>Estado</th>
+                            <th>Asunto</th>
+                            <th>Propietario</th>
+                            <th>Tipo Propietario</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for requerimiento in requerimientos %}
+                        <tr>
+                            <td>{{ requerimiento.codigo }}</td>
+                            <td>{{ requerimiento.prioridad }}</td>
+                            <td>
+                                {% for tipoRequerimiento in tiposRequerimientos %}
+                                    {% if tipoRequerimiento.id == requerimiento.idTipoRequerimiento %}
+                                        {{ tipoRequerimiento.tipo }}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% for catRequerimiento in catRequerimientos %}
+                                    {% if catRequerimiento.id == requerimiento.idCategoriaRequerimiento %}
+                                        {{ catRequerimiento.descripcion }}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>{{ requerimiento.fechaYhora }}</td>
+                            <td>{{ requerimiento.estado }}</td>
+                            <td>{{ requerimiento.asunto }}</td>
+                            <td>
+                                {% if requerimiento.tipoEmisor == "Interno" %}
+                                    {% for interno in internos %}
+                                        {% if interno.id == requerimiento.idEmisor %}
+                                            {{ interno.nombre }}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    {% for externo in externos %}
+                                        {% if externo.id == requerimiento.idEmisor %}
+                                            {{ externo.nombre }}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            </td>
+                            <td>{{ requerimiento.tipoEmisor }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Función de buscar -->
+<script>
+    $(document).ready(function() {
+        $('#buscador').on('keyup', function() {
+            var inputValue = $(this).val().toLowerCase();
+            $('#solicitudes tbody tr').each(function() {
+                var rowText = $(this).text().toLowerCase();
+                if (rowText.includes(inputValue)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+
+        // Actualiza las categorías disponibles en función del tipo seleccionado
+        $('#tipoFiltro').on('change', function() {
+            var tipoSeleccionado = $(this).val();
+            
+            $('#categoriaFiltro option').each(function() {
+                var tipoCategoria = $(this).data('tipo');
+                if (tipoCategoria === tipoSeleccionado || tipoSeleccionado === "") {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+
+            // Restablecer el valor del select de categoría
+            $('#categoriaFiltro').val('');
+            filtrarTabla();  // Actualiza la tabla al cambiar el tipo
+        });
+
+        // Filtrar la tabla
+        function filtrarTabla() {
+            var tipoFiltro = $('#tipoFiltro').val().toLowerCase();
+            var categoriaFiltro = $('#categoriaFiltro').val().toLowerCase();
+            var estadoFiltro = $('#estadoFiltro').val().toLowerCase();
+
+            $('#solicitudes tbody tr').filter(function() {
+                $(this).toggle(
+                    ($(this).find('td:nth-child(3)').text().toLowerCase().indexOf(tipoFiltro) > -1 || tipoFiltro === "") &&
+                    ($(this).find('td:nth-child(4)').text().toLowerCase().indexOf(categoriaFiltro) > -1 || categoriaFiltro === "") &&
+                    ($(this).find('td:nth-child(6)').text().toLowerCase().indexOf(estadoFiltro) > -1 || estadoFiltro === "")
+                );
+            });
+        }
+
+        // Evento de cambio en los selectores
+        $('#categoriaFiltro, #estadoFiltro').on('change', filtrarTabla);
+    });
+</script>
+
+
+{% include '/includes/pie.html' %}

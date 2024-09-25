@@ -1,0 +1,203 @@
+{% include '/includes/cabecera.html' %}
+<main>
+    <div class="container" style="height: 100vh;">
+        <div class="row justify-content-center align-items-center h-100"">
+            <div class="col">
+                <div class="card bg-light text-center">
+                    <div class="card-header"><h4 class="card-title">CREAR REQUERIMIENTO</h4></div>
+                    <div class="card-body">
+                        <form action="/requerimiento/registrar" method="post" enctype="multipart/form-data">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <span>Tipo de Requerimiento</span>
+                                        <select class="form-select" id="tipoSelect" name="idTipo" required>
+                                            <option value="" hidden>Seleccionar tipo</option>
+                                            {% for tipo in tiposRequerimientos %}
+                                                <option value="{{ tipo.id }}">{{ tipo.tipo }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-4">
+                                        <span>Categoria de Requerimiento</span>
+                                        <select class="form-select" id="categoriaSelect" name="idCategoria">
+                                            <option value="None" hidden>Seleccionar categoria</option>
+                                            {% for categoria in categoriasRequerimientos %}
+                                                <option value="{{ categoria.id }}" data-tipo="{{ categoria.idTipo }}">{{ categoria.descripcion }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-4">
+                                        <span>Prioridad</span>
+                                        <select class="form-select" name="prioridad">
+                                            <option hidden>Seleccionar Prioridad</option>
+                                            <option>Urgente</option>
+                                            <option>Alta</option>
+                                            <option>Media</option>
+                                            <option>Baja</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-4">
+                                <div class="col-6">
+                                    <span>Destinatario</span>
+                                    <div class="form-control">  
+                                        <input class="form-control" type="text" id="buscadorUsuarios" placeholder="Escribe para buscar usuario...">
+                                        <select class="form-select mt-2" id="resultadoUsuarios" name="idDestinatario">
+                                            <option value="" hidden>Seleccionar opción</option>
+                                            {% for usuario in usuariosInternos %}
+                                                <option value="{{usuario.id}}">{{usuario.nombre}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <span>Ingresar Archivos</span>
+                                    <div class="form-control">
+                                        <input type="file" id="archivos" name="archivos" accept=".doc,.docx,.xls,.xlsx,.pdf" multiple required>
+                                        <small id="fileHelp" class="form-text text-muted">Se permiten hasta 5 archivos en formatos Word, Excel y PDF.</small>
+                                        <div id="fileWarning" class="text-danger mt-2" style="display: none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div>
+                                        <label class="form-label mt-4">Asunto</label>
+                                        <textarea class="form-control" name="asunto" rows="3" maxlength="50" style="height: 88px;" placeholder="Asunto.."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div>
+                                        <label class="form-label mt-4">Descripcion</label>
+                                        <textarea class="form-control" name="descripcion" rows="3" maxlength="5000" style="min-height: 88px; max-height: 200px;" placeholder="Descripcion.."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <span>Vincular con otro Requerimiento</span>
+                                    <div class="form-control">  
+                                        <input class="form-control" type="text" id="buscadorRequerimientos" placeholder="Escribe para buscar requerimiento...">
+                                        <select class="form-select mt-2" id="resultadoRequerimientos" name="idRequerimiento">
+                                            <option value="" hidden>Seleccionar opción</option>
+                                            {% if tipoEmisor == "Externo" %}
+                                                {% for reqExterno in reqExternos %}
+                                                    {% if idEmisor == reqExterno.idEmisor %}
+                                                        <option value="{{reqExterno.id}}">{{reqExterno.codigo}}</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endif %}
+                                            {% if tipoEmisor == "Interno" %}
+                                                {% for requerimiento in requerimientos %}
+                                                    <option value="{{requerimiento.id}}">{{requerimiento.codigo}}</option>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <br>
+                                <button type="submit" class="form-control btn btn-success mt-1">Agregar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<!--Para que dependa el tipo de la categoria-->
+<script>
+    document.getElementById('tipoSelect').addEventListener('change', function() {
+        var tipoSeleccionado = this.value;
+        var categorias = document.getElementById('categoriaSelect').options;
+        
+        // Mostrar todas las opciones nuevamente
+        for (var i = 0; i < categorias.length; i++) {
+            var tipoCategoria = categorias[i].getAttribute('data-tipo');
+            
+            // Mostrar solo las categorías que coinciden con el tipo seleccionado
+            if (tipoCategoria === tipoSeleccionado) {
+                categorias[i].style.display = 'block';
+            } else {
+                categorias[i].style.display = 'none';
+            }
+        }
+        
+        // Restablecer el valor del select de categoría
+        document.getElementById('categoriaSelect').value = "";
+    });
+</script>
+<!-- Función de búsqueda con jQuery para usuarios destinatarios-->
+<script>
+    $(document).ready(function(){
+        $('#buscadorUsuarios').on('keyup', function() {
+            var inputValue = $(this).val().toLowerCase();
+            $('#resultadoUsuarios option').each(function() {
+                var optionText = $(this).text().toLowerCase();
+                // Mostrar solo las opciones que coincidan con el valor del input
+                if (optionText.includes(inputValue)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    });
+</script>
+<!--Busqueda para enlace de requerimientos-->
+<script>
+    $(document).ready(function(){
+        $('#buscadorRequerimientos').on('keyup', function() {
+            var inputValue = $(this).val().toLowerCase();
+            $('#resultadoRequerimientos option').each(function() {
+                var optionText = $(this).text().toLowerCase();
+                // Mostrar solo las opciones que coincidan con el valor del input
+                if (optionText.includes(inputValue)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    });
+</script>
+<!--Subidad de imagenes-->
+<script>
+    $(document).ready(function() {
+    $('#archivos').on('change', function() {
+        const archivos = $(this).get(0).files;
+        const fileWarning = $('#fileWarning');
+        fileWarning.hide();  // Ocultar advertencias anteriores
+
+        // Verificar número de archivos
+        if (archivos.length > 5) {
+            fileWarning.text("Solo se permiten hasta 5 archivos.").show();
+            $(this).val('');  // Limpiar el campo si excede el límite
+            return;
+        }
+
+        // Verificar formatos
+        let valid = true;
+        $.each(archivos, function(index, archivo) {
+            const extension = archivo.name.split('.').pop().toLowerCase();
+            if (!['doc', 'docx', 'xls', 'xlsx', 'pdf'].includes(extension)) {
+                valid = false;
+                return false;  // Romper el loop si se encuentra un archivo inválido
+            }
+        });
+
+        if (!valid) {
+            fileWarning.text("Formato de archivo no válido. Solo se permiten archivos Word, Excel y PDF.").show();
+            $(this).val('');  // Limpiar el campo
+        }
+    });
+});
+</script>
+{% include '/includes/pie.html' %}

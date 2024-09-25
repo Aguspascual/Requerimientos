@@ -1,0 +1,159 @@
+{% include '/includes/cabecera.html' %}
+<main>
+    <div class="container">
+        <div class="row mt-4">
+            <div class="col-4">
+                <div class="card bg-light mb-2">
+                    <h4 class="card-header">Registrar Tipo</h4>
+                    <div class="card-body">
+                        <form action="/tipoRequerimiento/registrar" method="post">
+                            <div>
+                                <span>Codigo</span>
+                                <input type="text" class="form-control" name="codigo" placeholder="codigo" minlength="3" maxlength="3" required>
+                            </div>
+                            <div>
+                                <span>Tipo</span>
+                                <input type="text" class="form-control" name="tipo" placeholder="Tipo" required>
+                            </div>
+                            <div>
+                                <br>
+                                <button type="submit" class="form-control btn btn-success">Agregar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-8">
+                <div class="form-group">
+                    <input type="text" class="form-control" name="buscador" id="buscador" placeholder="Buscar Tipo de Requerimiento">
+                </div>
+                <div>
+                    <table class="table table-light mt-2" id="usuarios">
+                        <thead>
+                            <tr class="table-info">
+                                <th>Codigo</th>
+                                <th>Tipo</th>
+                                <th>Accion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tipo in tiposrequerimientos %}
+                            <tr>
+                                <td>{{tipo.codigo}}</td>
+                                <td>{{tipo.tipo}}</td>
+                                <td>
+                                    <form action="/tipo/eliminar" method="post">
+                                        <div class="btn-group" role="group" aria-label="Basic example">
+                                            <!-- Modals -->
+                                            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalVer{{tipo.id}}">Ver</button>
+                                            <input type="number" name="id" value="{{tipo.id}}" hidden>
+                                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                                        </div>
+                                    </form>
+                        
+                                <!-- Modal Ver -->
+                                    <div class="modal fade" id="modalVer{{tipo.id}}" tabindex="-1" aria-labelledby="modalVerLabel{{tipo.id}}" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="modalVerLabel{{tipo.id}}">Tipo de Requerimiento</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <form action="/tipo/modificar" method="post">
+                                                    <div class="modal-body">
+                                                        <div class="form-floating mb-3">
+                                                            <input type="number" class="form-control" name="id" value="{{tipo.id}}" hidden>
+                                                            <input type="text" class="form-control" name="codigo" value="{{tipo.codigo}}" placeholder="Codigo">
+                                                            <label for="nombre">Codigo</label>
+                                                        </div>
+                                                        <div class="form-floating mb-3">
+                                                                <input type="text" class="form-control" name="tipo" value="{{tipo.tipo}}" placeholder="Tipo">
+                                                            <label for="nombre">Tipo</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                                        <button type="submit" class="btn btn-warning">Modificar</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>                        
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+ 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script>
+    // Write on keyup event of keyword input element
+    $(document).ready(function(){
+    $("#buscador").keyup(function(){
+    _this = this;
+    // Show only matching TR, hide rest of them
+    $.each($("#usuarios tbody tr"), function() {
+    if($(this).text().toLowerCase().indexOf($(_this).val().toLowerCase()) === -1)
+    $(this).hide();
+    else
+    $(this).show();
+    });
+    });
+   });
+</script>
+{% include '/includes/pie.html' %}
+<!--
+        <main>
+            <div class="container">
+                <div class="row">
+                    <div class="col-4">
+                        <form action="/tipoRequerimiento/registrar" method="post">
+                            <br>
+                            <h4>Tipo Requerimiento</h4>
+                            <div>
+                                <span>Codigo</span>
+                                <input type="text" class="form-control" name="codigo" placeholder="codigo" minlength="3" maxlength="3" required>
+                            </div>
+                            <div>
+                                <span>Tipo</span>
+                                <input type="text" class="form-control" name="tipo" placeholder="Tipo" required>
+                            </div>
+                            <div>
+                                <br>
+                                <button type="submit" class="form-control btn btn-success">Agregar</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-8">
+                        <div class="form-group">
+                            <br>
+                            <input type="text" class="form-control" name="buscador" id="buscador" placeholder="Buscar Tipo de Requerimiento">
+                            <br>
+                        </div>
+                        <div>
+                            <table class="table" id="usuarios">
+                                <thead>
+                                    <tr class="table-info">
+                                        <th>Codigo</th>
+                                        <th>Tipo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for tipo in tiposrequerimientos %}
+                                    <tr>
+                                        <td>{{tipo.codigo}}</td>
+                                        <td>{{tipo.tipo}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>-->

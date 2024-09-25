@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Title</title>
+        <!-- Required meta tags -->
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+        <!-- Bootstrap CSS v5.2.1 -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"/>
+    </head>
+
+    <body>
+        <header>
+            <!-- place navbar here -->
+        </header>
+        <main>
+            <div class="container">
+                <div class="row">
+                    <div class="col-4">
+                        <form action="/usuario/registrarInterno" method="post">
+                            <br>
+                            <div>
+                                <span>legajo</span>
+                                <input type="number" class="form-control" name="legajo" placeholder="legajo">
+                            </div>
+                            <div>
+                                <span>nombre</span>
+                                <input type="text" class="form-control" name="nombre" placeholder="Nombre">
+                            </div>
+                            <div class="div">
+                                <span>usuario</span>
+                                <input type="text" class="form-control" name="usuario" placeholder="usuario">
+                            </div>
+                            <div class="div">
+                                <span>contraseña</span>
+                                <input type="password" class="form-control" name="contrasena" placeholder="contraseña">
+                            </div>
+                            <div class="div">
+                                <span>correo</span>
+                                <input type="text" class="form-control" name="correo" placeholder="correo">
+                            </div>
+                            <div class="div">
+                                <span>cargo</span>
+                                <input type="text" class="form-control" name="cargo" placeholder="cargo">
+                            </div>
+                            <div class="div">
+                                <span>departamento</span>
+                                <input type="text" class="form-control" name="departamento" placeholder="departamento">
+                            </div>
+                            <div>
+                                <br>
+                                <button type="submit" class="form-control btn btn-success">Agregar</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-8">
+                        <div class="form-group">
+                            <br>
+                            <input type="text" class="form-control" name="buscador" id="buscador" placeholder="Buscar usuario">
+                            <br>
+                        </div>
+                        <div>
+                            <table class="table" id="usuarios">
+                                <thead>
+                                    <tr class="table-info">
+                                        <th>Legajo</th>
+                                        <th>Nombre</th>
+                                        <th>Usuario</th>
+                                        <th>Contraseña</th>
+                                        <th>Correo</th>
+                                        <th>Cargo</th>
+                                        <th>Departamento</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for usuario in usuariosInterno %}
+                                    <tr>
+                                        <td>{{usuario.legajo}}</td>
+                                        <td>{{usuario.nombre}}</td>
+                                        <td>{{usuario.usuario}}</td>
+                                        <td>{{usuario.contrasena}}</td>
+                                        <td>{{usuario.correo}}</td>
+                                        <td>{{usuario.cargo}}</td>
+                                        <td>{{usuario.departamento}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer>
+            <!-- place footer here -->
+        </footer>
+        <!-- Bootstrap JavaScript Libraries -->
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    </body>
+</html>
+<script>
+    // Write on keyup event of keyword input element
+    $(document).ready(function(){
+    $("#buscador").keyup(function(){
+    _this = this;
+    // Show only matching TR, hide rest of them
+    $.each($("#usuarios tbody tr"), function() {
+    if($(this).text().toLowerCase().indexOf($(_this).val().toLowerCase()) === -1)
+    $(this).hide();
+    else
+    $(this).show();
+    });
+    });
+   });
+   </script>
+            

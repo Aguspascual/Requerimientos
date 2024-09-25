@@ -1,0 +1,179 @@
+{% include '/includes/cabecera.html' %}
+
+<main>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <br>
+                    <input type="text" class="form-control" name="buscador" id="buscador" placeholder="Buscar Mi Solicitud">
+                    <br>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <table class="table" id="misSolicitudes">
+                    <thead>
+                        <tr class="table table-light">
+                            <th>Codigo</th>
+                            <th>Tipo</th>
+                            <th>Categoria</th>
+                            <th>Fecha de alta</th>
+                            <th>Estado</th>
+                            <th>Asunto</th>
+                            <th>Propietario</th>
+                            <th>Accion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for requerimiento in requerimientos %}
+                        <tr>
+                            <td>{{ requerimiento.codigo }}</td>
+                            {% for tipoRequerimiento in tiposRequerimientos %}
+                                {% if tipoRequerimiento.id == requerimiento.idTipoRequerimiento %}
+                                    <td>{{ tipoRequerimiento.tipo }}</td>
+                                {% endif %}
+                            {% endfor %}
+                            {% for catRequerimiento in catRequerimientos %}
+                                {% if catRequerimiento.id == requerimiento.idCategoriaRequerimiento %}
+                                    <td>{{ catRequerimiento.descripcion }}</td>
+                                {% endif %}
+                            {% endfor %}
+                            <td>{{ requerimiento.fechaYhora }}</td>
+                            <td>{{ requerimiento.estado }}</td>
+                            <td>{{ requerimiento.asunto }}</td>
+                            <td>
+                                {% for usuario in usuarios %}
+                                    {% if usuario.id == requerimiento.idEmisor %}
+                                        {{ usuario.nombre }}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td><button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalVer{{ requerimiento.id }}" data-id="{{ requerimiento.id }}">Historial</button></td>
+                            <!-- Modal Ver -->
+                            <div class="modal fade" id="modalVer{{ requerimiento.id }}" tabindex="-1" aria-labelledby="modalVerLabel{{ requerimiento.id }}" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="modalVerLabel{{ requerimiento.id }}">Detalle del Requerimiento</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <h6>Código:<span style="color: rgb(94, 94, 94);"> {{ requerimiento.codigo }}</span></h6>
+                                            <h6>Tipo: {% for tipoRequerimiento in tiposRequerimientos %}
+                                                {% if tipoRequerimiento.id == requerimiento.idTipoRequerimiento %}
+                                                    <span style="color: rgb(94, 94, 94);"> {{ tipoRequerimiento.tipo }}</span>
+                                                {% endif %}
+                                            {% endfor %}</h6>
+                                            <h6>Categoría: {% for catRequerimiento in catRequerimientos %}
+                                                {% if catRequerimiento.id == requerimiento.idCategoriaRequerimiento %}
+                                                <span style="color: rgb(94, 94, 94);"> {{ catRequerimiento.descripcion }}</span>
+                                                {% endif %}
+                                            {% endfor %}</h6>
+                                            <h6>Estado:<span style="color: rgb(94, 94, 94);"> {{ requerimiento.estado }}</span></h6>
+                                            <h6>Prioridad:<span style="color: rgb(94, 94, 94);"> {{ requerimiento.prioridad }}</span></h6>
+                                            <h6>Usuario Propietario: {% set usuario_encontrado = False %}
+                                                {% if requerimiento.tipoEmisor == "Interno" %}
+                                                    {% for interno in internos %}
+                                                        {% if interno.id == requerimiento.idEmisor %}
+                                                        <span style="color: rgb(94, 94, 94);">{{ interno.nombre }}</span>
+                                                            {% set usuario_encontrado = True %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                                {% if requerimiento.tipoEmisor == "Externo" %}
+                                                    {% for externo in externos %}
+                                                        {% if externo.id == requerimiento.idEmisor %}
+                                                        <span style="color: rgb(94, 94, 94);">{{ externo.nombre }}</span>
+                                                            {% set usuario_encontrado = True %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                            </h6>
+                                            <h6>Fecha y Hora de Alta:<span style="color: rgb(94, 94, 94);"> {{ requerimiento.fechaYhora }}</span></h6>
+                                            <h6>Asunto:<span style="color: rgb(94, 94, 94);">{{ requerimiento.asunto }}</span></h6>
+                                            <h6>Descripción: <span style="color: rgb(94, 94, 94);">{{ requerimiento.descripcion }}</span></h6>
+                                            <h6>Archivos Adjuntos:</h6>
+                                            <ul id="listaArchivosAdjuntos">
+                                                {% for archivo in requerimiento.archivos %}
+                                                    <li>
+                                                        <a href="{{ url_for('static', filename='img/archivos/' + archivo.nombre) }}" target="_blank">
+                                                            {{ archivo.nombre.split('_', 1)[1] }}  <!-- Quita la parte antes del primer '_' -->
+                                                        </a>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                            <h6>Comentarios:</h6>
+                                            <div class="comentarios-container" style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 20px;">
+                                                <div class="list-group" id="comentariosContainer">
+                                                    {% for comentario in comentarios %}
+                                                        {% if comentario.idRequerimiento == requerimiento.id %}
+                                                        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                                                            <div class="d-flex w-100 justify-content-between">
+                                                                <h5 class="mb-1">{{ comentario.asunto }}</h5>
+                                                                <small class="text-muted">{{ comentario.fechaYhora.strftime('%Y-%m-%d %H:%M') }}</small>
+                                                            </div>
+                                                            <p class="mb-1">{{ comentario.descripcion }}</p>
+                                                            <small class="text-muted">Enviado por Usuario ID: 
+                                                                {% for interno in internos %}
+                                                                    {% if interno.id == comentario.idUsuarioEmisor %}
+                                                                        {{ interno.nombre }}
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </small>
+                                                        </a>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                            <div class="input-container">
+                                                <form action="/comentario/registrar" method="POST">
+                                                    <div class="mb-3">
+                                                        <input type="number" name="idRequerimiento" value="{{requerimiento.id}}" hidden>
+                                                        <label for="asunto" class="form-label">Asunto</label>
+                                                        <input type="text" class="form-control" id="asunto" name="asunto" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="descripcion" class="form-label">Descripción</label>
+                                                        <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required></textarea>
+                                                    </div>
+                                                    <input type="text" value="misSolicitudes" name="ubicacion" hidden>
+                                                    <button type="submit" class="btn btn-primary">Agregar Comentario</button>
+                                                </form>
+                                            </div>
+                                            <div id="comentariosContainer"></div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            {% if requerimiento.estado == "Asignado" %}
+                                                <form action="/cerrarRequerimiento" method="post">
+                                                    <input type="number" name="idRequerimiento" value="{{requerimiento.id}}" hidden>
+                                                    <button type="submit" class="btn btn-danger">Cerrar Caso</button>
+                                                </form>
+                                            {% endif %}
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $("#buscador").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#misSolicitudes tbody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().includes(value));
+            });
+        });
+    });
+</script>
+
+{% include '/includes/pie.html' %}
