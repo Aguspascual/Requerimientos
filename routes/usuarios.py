@@ -13,9 +13,11 @@ def verUsuarios():
     if session.get('user_active') != True or session.get('user_tipo') != "Interno":
         return redirect(url_for('auth.indexLogin'))
     nombre = session.get('user_nombre')
+    tipoUsuario = session.get('user_tipo')
     internos = UsuarioInterno.query.all()
     externos = UsuarioExterno.query.all()
     return render_template('/usuarios/usuarios.html',
                             internos = internos,
                             externos = externos,
-                            nombre = nombre)
+                            nombre = nombre,
+                            tipoUsuario = tipoUsuario)

@@ -121,6 +121,11 @@
                                                                         {{ interno.nombre }}
                                                                     {% endif %}
                                                                 {% endfor %}
+                                                                {% for externo in externos %}
+                                                                    {% if externo.id == comentario.idUsuarioEmisor %}
+                                                                        {{ externo.nombre }}
+                                                                    {% endif %}
+                                                                {% endfor %}
                                                             </small>
                                                         </a>
                                                         {% endif %}

@@ -25,20 +25,26 @@
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Requerimiento</a>
                     <div class="dropdown-menu">
+                      {% if tipoUsuario == "Interno" %}
                       <a class="dropdown-item" href="/categoriaRequerimiento">Categorias</a><!--Solo internos--><!--Hecho-->
                       <a class="dropdown-item" href="/tipoRequerimiento">Tipos</a><!--Solo internos--><!--Hecho-->
+                      {% endif%}
                       <a class="dropdown-item" href="/requerimiento/nuevo">Nuevo</a>
+                      {% if tipoUsuario == "Interno" %}
                       <a class="dropdown-item" href="/solicitudesAcargo">Solicitudes a cargo</a> <!--Solo internos-->
                       <a class="dropdown-item" href="/verSolicitudes">Visualización de Solicitudes</a> <!--Solo internos--><!--Hecho-->
                       <a class="dropdown-item" href="/asignacionSolicitudes">Asignacion de Solicitudes</a> <!--Solo internos--><!--Hecho-->
+                      {% endif%}
                     </div>
                   </li>
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Usuario</a>
                     <div class="dropdown-menu">
+                      {% if tipoUsuario == "Interno" %}
                       <a class="dropdown-item" href="/verUsuarios">Ver usuarios</a><!--Solo internos--><!--Hecho-->
                       <a class="dropdown-item" href="/registrarInterno">Crear usuario interno</a><!--Solo internos--><!--Hecho-->
                       <a class="dropdown-item" href="/registrarExterno">Crear usuario externo</a><!--Solo internos--><!--Hecho-->
+                      {% endif%}
                       <a class="dropdown-item" href="/cambiarContraseña">Cambiar contraseña</a><!--Hecho-->
                       <a class="dropdown-item" href="#"></a>
                       <div class="dropdown-divider"></div>

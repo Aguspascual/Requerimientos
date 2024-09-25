@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, Blueprint, session, send_from_directory, abort
-from models.Requerimiento import Requerimiento, Comentario, Evento, CategoriaRequerimiento, TipoRequerimiento, RequerimientoXusuario, Archivo, RelacionRequerimiento
+from models.Requerimiento import Requerimiento, Comentario, Evento, CategoriaRequerimiento, TipoRequerimiento, Archivo, RelacionRequerimiento
 from models.UsuarioInterno import UsuarioInterno
 from models.UsuarioExterno import UsuarioExterno
 from werkzeug.utils import secure_filename
@@ -18,6 +18,7 @@ def nuevoRequerimiento():
     if session.get('user_active') != True:
         return redirect(url_for('auth.indexLogin'))
     nombre = session.get('user_nombre')
+    tipoUsuario = session.get('user_tipo')
     requerimientos = Requerimiento.query.all()
     categoriasRequerimientos = CategoriaRequerimiento.query.all()
     tiposRequerimientos = TipoRequerimiento.query.all()
@@ -36,7 +37,8 @@ def nuevoRequerimiento():
                             tipoEmisor = tipoEmisor,
                             idEmisor = idEmisor,
                             reqExternos = reqExternos,
-                            nombre = nombre)
+                            nombre = nombre,
+                            tipoUsuario = tipoUsuario)
 
 @requerimiento.route('/requerimiento/registrar', methods= ['POST'])
 def registrarRequerimiento():
@@ -142,6 +144,8 @@ def misSolicitudes():
         usuarios = UsuarioInterno.query.all()
     elif tipoUsuario == "Externo":
         usuarios = UsuarioExterno.query.all()
+    internos = UsuarioInterno.query.all()
+    externos = UsuarioExterno.query.all()
     requerimientos = Requerimiento.query.filter(Requerimiento.idEmisor == user_id, Requerimiento.tipoEmisor == tipoUsuario).all()
     tiposRequerimientos = TipoRequerimiento.query.all()
     catRequerimientos = CategoriaRequerimiento.query.all()
@@ -155,8 +159,11 @@ def misSolicitudes():
                            catRequerimientos = catRequerimientos,
                            usuarios = usuarios,
                            nombre = nombre,
+                           tipoUsuario = tipoUsuario,
                            eventos = eventos,
-                           comentarios = comentarios)
+                           comentarios = comentarios,
+                           internos = internos,
+                           externos = externos)
 
 @requerimiento.route('/solicitudesAcargo')
 def solicitudesAcargo():
@@ -183,6 +190,7 @@ def solicitudesAcargo():
                            internos = internos,
                            externos = externos,
                            nombre = nombre,
+                           tipoUsuario = tipoUsuario,
                            comentarios = comentarios,
                            eventos = eventos)
 
@@ -192,7 +200,7 @@ def verSolicitudes():
     if session.get('user_active') != True or session.get('user_tipo') != "Interno":
         return redirect(url_for('auth.indexLogin'))
     nombre = session.get('user_nombre')
-    idUsuario = session.get('user_id')
+    tipoUsuario = session.get('user_tipo')
     requerimientos = Requerimiento.query.all()
     tiposRequerimientos = TipoRequerimiento.query.all()
     catRequerimientos = CategoriaRequerimiento.query.all()
@@ -205,7 +213,8 @@ def verSolicitudes():
                            catRequerimientos = catRequerimientos,
                            internos = internos,
                            externos = externos,
-                           nombre = nombre)
+                           nombre = nombre,
+                           tipoUsuario = tipoUsuario)
 
 @requerimiento.route('/asignacionSolicitudes')
 def asignacionSolici():
@@ -213,6 +222,7 @@ def asignacionSolici():
     if session.get('user_active') != True or session.get('user_tipo') != "Interno":
         return redirect(url_for('auth.indexLogin'))
     nombre = session.get('user_nombre')
+    tipoUsuario = session.get('user_tipo')
     requerimientos = Requerimiento.query.filter(Requerimiento.idDestinatario == None).all()
     tiposRequerimientos = TipoRequerimiento.query.all()
     catRequerimientos = CategoriaRequerimiento.query.all()
@@ -224,7 +234,8 @@ def asignacionSolici():
                            catRequerimientos = catRequerimientos,
                            internos = internos,
                            externos = externos, 
-                           nombre = nombre)
+                           nombre = nombre,
+                           tipoUsuario = tipoUsuario)
 
 @requerimiento.route('/requerimiento/asignar', methods = ['POST'])
 def asignarRequerimiento():
@@ -256,12 +267,14 @@ def indexcategoriaRequerimiento():
     if session.get('user_active') != True or session.get('user_tipo') != "Interno":
         return redirect(url_for('auth.indexLogin'))
     nombre = session.get('user_nombre')
+    tipoUsuario = session.get('user_tipo')
     tiposRequerimientos = TipoRequerimiento.query.all()
     categoriasRequerimientos = CategoriaRequerimiento.query.all()
     return render_template('/requerimientos/categoriaRequerimiento.html',
                            categoriasRequerimientos = categoriasRequerimientos,
                            tiposRequerimientos = tiposRequerimientos,
-                           nombre = nombre)
+                           nombre = nombre,
+                           tipoUsuario = tipoUsuario)
 
 @categoriaRequerimiento.route('/categoriaRequerimiento/registrar', methods = ['POST'])
 def registrarCategoriaRequerimiento():
@@ -309,10 +322,12 @@ def indexTipoRequerimiento():
     if session.get('user_active') != True or session.get('user_tipo') != "Interno":
         return redirect(url_for('auth.indexLogin'))
     nombre = session.get('user_nombre')
+    tipoUsuario = session.get('user_tipo')
     tiposrequerimientos = TipoRequerimiento.query.all()
     return render_template('/requerimientos/tipoRequerimiento.html',
                            tiposrequerimientos = tiposrequerimientos,
-                           nombre = nombre)
+                           nombre = nombre,
+                           tipoUsuario = tipoUsuario)
 
 @tipoRequerimiento.route('/tipoRequerimiento/registrar', methods = ['POST'])
 def registrarTipoRequerimiento():
@@ -443,14 +458,3 @@ def descargar_archivo(filename):
 
 # Define el blueprint para REQUERIMIENTO X USUARIO
 requerimientoXusuario = Blueprint('requerimientoXusuario', __name__)
-
-@requerimientoXusuario.route('/requerimientoXusuario/registrar')
-def registrarRequerimientoXusuario():
-    # Obtengo los datos del formulario
-    idRequerimiento = request.form['idRequerimiento']
-    idUsuario = request.form['idUsuario']
-    # Creo la instancia de CategoriaRequerimiento
-    requerimientoXusuario = RequerimientoXusuario(idRequerimiento, idUsuario)
-    # Guardo en la base de datos
-    db.session.add(requerimientoXusuario)
-    db.session.commit()
