@@ -88,12 +88,14 @@ class Comentario(db.Model):
     descripcion = db.Column(db.String(5000)) #Se define como varchar en la base de datos
     fechaYhora = db.Column(db.DateTime)
     idUsuarioEmisor = db.Column(db.Integer)
+    tipoUsuario = db.Column(db.String(255))
     idEvento = db.Column(db.Integer)
 
-    def __init__(self, idRequerimiento, asunto, descripcion, fechaYhora, idUsuarioEmisor, idEvento):
+    def __init__(self, idRequerimiento, asunto, descripcion, fechaYhora, idUsuarioEmisor, tipoUsuario, idEvento):
         self.idRequerimiento = idRequerimiento
         self.asunto = asunto
         self.descripcion = descripcion
         self.fechaYhora = fechaYhora
         self.idUsuarioEmisor = idUsuarioEmisor
+        self.tipoUsuario = tipoUsuario
         self.idEvento = idEvento

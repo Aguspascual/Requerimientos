@@ -206,7 +206,13 @@ def verSolicitudes():
     catRequerimientos = CategoriaRequerimiento.query.all()
     internos = UsuarioInterno.query.all()
     externos = UsuarioExterno.query.all()
-
+    comentarios = Comentario.query.all()
+    eventos = Evento.query.all()
+    # Obtener archivos asociados a cada requerimiento
+    for req in requerimientos:
+        req.archivos = Archivo.query.filter(Archivo.idRequerimiento == req.id).all()
+        if not req.archivos:  # Si la lista está vacía
+            req.archivos = [] 
     return render_template('/requerimientos/verSolicitudes.html',
                            requerimientos = requerimientos,
                            tiposRequerimientos = tiposRequerimientos,
@@ -214,7 +220,10 @@ def verSolicitudes():
                            internos = internos,
                            externos = externos,
                            nombre = nombre,
-                           tipoUsuario = tipoUsuario)
+                           tipoUsuario = tipoUsuario,
+                           comentarios = comentarios, 
+                           eventos = eventos
+                           )
 
 @requerimiento.route('/asignacionSolicitudes')
 def asignacionSolici():
@@ -421,7 +430,7 @@ def registrarComentario():
     idEvento = evento.id
     
     # Creo la instancia de comentario
-    comentario = Comentario(idRequerimiento, asunto, descripcion, fechaYhora, idUsuarioEmisor, idEvento)
+    comentario = Comentario(idRequerimiento, asunto, descripcion, fechaYhora, idUsuarioEmisor, tipoUsuarioResponsable, idEvento)
     
     # Guardo en la base de datos
     db.session.add(comentario)
