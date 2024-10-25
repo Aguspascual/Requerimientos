@@ -29,6 +29,10 @@ class Requerimiento (db.Model):
         self.idTipoRequerimiento = idTipoRequerimiento
         self.idCategoriaRequerimiento = idCategoriaRequerimiento
         self.tipoEmisor = tipoEmisor
+    
+    # Cambiar el estado del objeto
+    def modEstado(self, estado):
+        self.estado = estado
 
 class CategoriaRequerimiento(db.Model):
     id = db.Column(db.Integer, primary_key = True)

@@ -6,6 +6,9 @@ from werkzeug.utils import secure_filename
 from utils.db import db
 from datetime import datetime
 import os
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 
 # Define el blueprint
@@ -121,13 +124,69 @@ def registrarRequerimiento():
     evento = Evento(idRequerimiento , accion, fechaYhora, idUsuarioResponsable, tipoUsuarioResponsable)
     db.session.add(evento)
     db.session.commit()
+
+    # Envio de correo
+    # Función para cargar la plantilla y reemplazar variables
+    def cargar_plantilla(ruta_plantilla, **kwargs):
+        with open(ruta_plantilla, 'r') as archivo:
+            plantilla = archivo.read()
+        # Reemplazar las variables en la plantilla
+        for clave, valor in kwargs.items():
+            plantilla = plantilla.replace(f"{{{{{clave}}}}}", str(valor))
+        return plantilla
+
+    # Datos del correo
+    asunto = "Registro de requerimiento"
+    mensaje = "Este es un mensaje de prueba"
+
+    # Cargar la plantilla HTML y reemplazar variables
+    categorias = CategoriaRequerimiento.query.all()
+    for cat in categorias:
+        if cat.id == idCategoriaRequerimiento:
+            categoria = categoria.nombre
+    tipos = TipoRequerimiento.query.all()
+    for tip in tipos:
+        if tip.id == idTipoRequerimiento:
+            tipo = tip.nombre
+    tipo = "Requerimiento de hardware"
+    categoria = "Solicitud nuevo hardware"
+    print(tipo)
+    html = cargar_plantilla('templates/emails/nuevoRequerimiento.html', asunto=asunto, mensaje=mensaje, codigo=codigo, tipo=tipo, categoria=categoria, descripcion = descripcion)
+    # Obtengo el correo del emisor
+    if tipoEmisor == "Interno":
+        emisor = UsuarioInterno.query.get(idEmisor)
+        correo = emisor.correo
+    elif tipoEmisor == "Externo":
+        emisor = UsuarioExterno.query.get(idEmisor)
+        correo = emisor.correo
+    print(correo)
+    # Configuración del servidor SMTP
+    servidor = smtplib.SMTP("smtp.gmail.com", 587)
+    servidor.starttls()
+    servidor.login("aguspascual2001@gmail.com", "isqy rsxw laps hnqq")
+
+    # Crear el mensaje con formato HTML
+    msg = MIMEMultipart("alternative")
+    msg["From"] = "aguspascual2001@gmail.com"
+    msg["To"] = correo
+    msg["Subject"] = asunto
+
+    # Adjuntar el mensaje en formato HTML
+    parte_html = MIMEText(html, "html")
+    msg.attach(parte_html)
+
+    # Enviar el correo
+    servidor.sendmail("aguspascual2001@gmail.com", correo, msg.as_string())
+
+    # Cerrar la conexión con el servidor SMTP
+    servidor.quit()
     return redirect(url_for('requerimiento.nuevoRequerimiento'))
 
 @requerimiento.route('/cerrarRequerimiento', methods= ['POST'])
 def cerrarRequerimiento():
     id_requerimiento = request.form['idRequerimiento']
     requerimiento = Requerimiento.query.filter_by(id=id_requerimiento).one()
-    requerimiento.estado = "Cerrado"
+    requerimiento.modEstado("Cerrado")
     requerimiento.idEmisor = None
     db.session.commit()
     return redirect(url_for('requerimiento.misSolicitudes'))
@@ -254,7 +313,7 @@ def asignarRequerimiento():
     interno = request.form['interno']
     idRequerimiento = request.form['idRequerimiento']
     requerimiento = Requerimiento.query.get(idRequerimiento)
-    requerimiento.estado = "Asignado"
+    requerimiento.modEstado("Asignado")
     requerimiento.idDestinatario = interno
     db.session.commit()
     # Creacion del evento

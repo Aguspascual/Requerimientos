@@ -1,7 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for, Blueprint, session
 from models.UsuarioExterno import UsuarioExterno
 from utils.db import db
-from werkzeug.security import generate_password_hash 
+from werkzeug.security import generate_password_hash
+import smtplib
+from email.mime.text import MIMEText 
+from email.mime.multipart import MIMEMultipart
 
 # Define el blueprint
 usuarioExterno = Blueprint('usuarioExterno', __name__)
@@ -32,6 +35,41 @@ def RegistrarExterno():
     # Lo agrego a la base de datos
     db.session.add(nuevo_usuario)
     db.session.commit()
+    
+    # Envio de correo
+    # Función para cargar la plantilla y reemplazar variables
+    def cargar_plantilla(ruta_plantilla, **kwargs):
+        with open(ruta_plantilla, 'r') as archivo:
+            plantilla = archivo.read()
+        # Reemplazar las variables en la plantilla
+        for clave, valor in kwargs.items():
+            plantilla = plantilla.replace(f"{{{{{clave}}}}}", str(valor))
+        return plantilla
+
+    # Datos del correo
+    asunto = "Registro de requerimiento"
+
+    html = cargar_plantilla('templates/emails/registro.html',nombre = nombre)
+    # Configuración del servidor SMTP
+    servidor = smtplib.SMTP("smtp.gmail.com", 587)
+    servidor.starttls()
+    servidor.login("aguspascual2001@gmail.com", "isqy rsxw laps hnqq")
+
+    # Crear el mensaje con formato HTML
+    msg = MIMEMultipart("alternative")
+    msg["From"] = "aguspascual2001@gmail.com"
+    msg["To"] = correo
+    msg["Subject"] = asunto
+
+    # Adjuntar el mensaje en formato HTML
+    parte_html = MIMEText(html, "html")
+    msg.attach(parte_html)
+
+    # Enviar el correo
+    servidor.sendmail("aguspascual2001@gmail.com", correo, msg.as_string())
+
+    # Cerrar la conexión con el servidor SMTP
+    servidor.quit()
     return redirect(url_for('usuarios.verUsuarios'))
 
 @usuarioExterno.route('/externo/modificar', methods = ['POST'])
@@ -64,7 +102,6 @@ def eliminarExterno():
     # Si no esta iniciada la Sesion, lo redirigo al login
     if session.get('user_active') != True or session.get('user_tipo') != "Interno":
         return redirect(url_for('auth.indexLogin'))
-    nombre = session.get('user_nombre')
     id = request.form.get('id')
     externo = UsuarioExterno.query.get(id)
     db.session.delete(externo)
