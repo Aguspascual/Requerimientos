@@ -31,7 +31,7 @@
                 </div>
                 <div>
                     <!--Tabla de tipos de requerimiento-->
-                    <table class="table table-light mt-2" id="tiposRequerimientos">
+                    <table class="table table-light mt-2 table-bordered text-center" id="tiposRequerimientos">
                         <thead>
                             <tr class="table-info">
                                 <th>Codigo</th>
@@ -45,11 +45,11 @@
                                     <td>{{tipo.codigo}}</td>
                                     <td>{{tipo.tipo}}</td>
                                     <td>
-                                        <form action="/tipo/eliminar" method="post">
+                                        <form action="/tipo/eliminar" method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este tipo de requerimiento?');">
                                             <div class="btn-group" role="group" aria-label="Basic example">
-                                                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalVer{{tipo.id}}">Ver</button>
+                                                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalVer{{tipo.id}}"><i class="fas fa-eye"></i></button>
                                                 <input type="number" name="id" value="{{tipo.id}}" hidden>
-                                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                                                <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i></button>
                                             </div>
                                         </form>
                                     <!-- Modal Ver -->
@@ -60,7 +60,7 @@
                                                         <h5 class="modal-title" id="modalVerLabel{{tipo.id}}">Tipo de Requerimiento</h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
-                                                    <form action="/tipo/modificar" method="post">
+                                                    <form action="/tipo/modificar" method="post" onsubmit="return confirm('¿Estás seguro de que deseas modificar este tipo de requerimiento?');">
                                                         <div class="modal-body">
                                                             <div class="form-floating mb-3">
                                                                 <input type="number" class="form-control" name="id" value="{{tipo.id}}" hidden>

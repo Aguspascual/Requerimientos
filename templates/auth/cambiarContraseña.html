@@ -8,7 +8,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="m-sm-4">
-                                    <form action="/cambiarContraseña/modificar" method="post">
+                                    <form action="/cambiarContraseña/modificar" method="post" onsubmit="return confirm('¿Estás seguro de que deseas modificar la contraseña?');">
                                         <div class="container">
                                             <div class="row">
                                                 <div class="col-6">
@@ -37,7 +37,7 @@
                                             </div>
                                         </div>
                                         <div class="text-center mt-3">
-                                          <button type="submit" class="btn btn-lg btn-primary mb-3">Cambiar contraseña</button>
+                                          <button type="submit" class="btn btn-lg btn-primary mb-3" onclick="confirmarEliminar()">Cambiar contraseña</button>
                                         </div>
                                     </div>
                                 </form>
@@ -50,4 +50,12 @@
         </div>
     </div>
 </main>
+<script>
+    function confirmarEliminar(id) {
+        if (confirm('¿Estás seguro de que deseas modificar la contraseña?')) {
+        } else {
+            console.log('modificacion cancelada');
+        }
+    }
+</script>
 {% include '/includes/pieAuth.html'%}

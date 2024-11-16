@@ -36,6 +36,7 @@ def inicio():
         session['user_usuario'] = user.usuario
         session['user_nombre'] = user.nombre
         return redirect(url_for('requerimiento.misSolicitudes'))
+    
     # En caso de que no exista el usuario redirijo a login
     return redirect(url_for('auth.indexLogin'))
 
@@ -76,6 +77,7 @@ def cambiarContraseñaModificar():
             usuario.contrasena = generate_password_hash(contrasenaNueva)
             # Guarda los cambios
             db.session.commit()  
+            
     return redirect(url_for('requerimiento.misSolicitudes'))
 
 @auth.route('/logout')

@@ -34,6 +34,14 @@ class Requerimiento (db.Model):
     def modEstado(self, estado):
         self.estado = estado
 
+    def requerimientosAcargo(idUsuario):
+        requerimientos = Requerimiento.query.filter(Requerimiento.idDestinatario == idUsuario).all()
+        return requerimientos
+    
+    def verRequerimiento(id):
+        requerimiento = Requerimiento.query.filter_by(id=id).first()
+        return requerimiento
+
 class CategoriaRequerimiento(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     idTipo = db.Column(db.Integer)
@@ -85,6 +93,10 @@ class Evento(db.Model):
         self.idUsuarioResponsable = idUsuarioResponsable
         self.tipoUsuarioResponsable = tipoUsuarioResponsable
 
+    def verEventos():
+        eventos = Evento.query.all()
+        return eventos
+
 class Comentario(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     idRequerimiento = db.Column(db.Integer)
@@ -103,3 +115,7 @@ class Comentario(db.Model):
         self.idUsuarioEmisor = idUsuarioEmisor
         self.tipoUsuario = tipoUsuario
         self.idEvento = idEvento
+
+    def verComentarios():
+        comentarios = Comentario.query.all()
+        return comentarios

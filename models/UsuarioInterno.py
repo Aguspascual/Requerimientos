@@ -22,4 +22,15 @@ class UsuarioInterno(db.Model):
         self.cargo = cargo
         self.departamento = departamento
         
+    def verInternos():
+        internos = UsuarioInterno.query.all()
+        return internos
 
+    def verInterno(id):
+        interno = UsuarioInterno.query.filter_by(id=id).first()
+        return interno
+    
+    def verCorreo(id):
+        interno = UsuarioInterno.query.filter_by(id=id).first()
+        correo = interno.correo
+        return correo

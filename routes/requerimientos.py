@@ -20,6 +20,7 @@ def nuevoRequerimiento():
     # Si no esta iniciada la Sesion, lo redirigo al login
     if session.get('user_active') != True:
         return redirect(url_for('auth.indexLogin'))
+    ubicacion = "Requerimiento"
     nombre = session.get('user_nombre')
     tipoUsuario = session.get('user_tipo')
     requerimientos = Requerimiento.query.all()
@@ -41,7 +42,8 @@ def nuevoRequerimiento():
                             idEmisor = idEmisor,
                             reqExternos = reqExternos,
                             nombre = nombre,
-                            tipoUsuario = tipoUsuario)
+                            tipoUsuario = tipoUsuario,
+                            ubicacion = ubicacion)
 
 @requerimiento.route('/requerimiento/registrar', methods= ['POST'])
 def registrarRequerimiento():
@@ -196,6 +198,7 @@ def misSolicitudes():
     # Si no esta iniciada la Sesion, lo redirigo al login
     if session.get('user_active') != True:
         return redirect(url_for('auth.indexLogin'))
+    ubicacion = "MisSolicitudes"
     nombre = session.get('user_nombre')
     tipoUsuario = session.get('user_tipo')
     user_id = session.get('user_id')
@@ -222,22 +225,24 @@ def misSolicitudes():
                            eventos = eventos,
                            comentarios = comentarios,
                            internos = internos,
-                           externos = externos)
+                           externos = externos,
+                           ubicacion = ubicacion)
 
 @requerimiento.route('/solicitudesAcargo')
 def solicitudesAcargo():
     if session.get('user_active') != True or session.get('user_tipo') != "Interno":
         return redirect(url_for('auth.indexLogin'))
+    ubicacion = "Requerimiento"
     nombre = session.get('user_nombre')
     idUsuario = session.get('user_id')
     tipoUsuario = session.get('user_tipo')
-    requerimientos = Requerimiento.query.filter(Requerimiento.idDestinatario == idUsuario).all()
+    requerimientos = Requerimiento.requerimientosAcargo(idUsuario)
     tiposRequerimientos = TipoRequerimiento.query.all()
     catRequerimientos = CategoriaRequerimiento.query.all()
-    internos = UsuarioInterno.query.all()
-    externos = UsuarioExterno.query.all()
-    comentarios = Comentario.query.all()
-    eventos = Evento.query.all()
+    internos = UsuarioInterno.verInternos()
+    externos = UsuarioExterno.verExternos()
+    comentarios = Comentario.verComentarios()
+    eventos = Evento.verEventos()
     # Obtener archivos asociados a cada requerimiento
     for req in requerimientos:
         req.archivos = Archivo.query.filter(Archivo.idRequerimiento == req.id).all()
@@ -251,13 +256,15 @@ def solicitudesAcargo():
                            nombre = nombre,
                            tipoUsuario = tipoUsuario,
                            comentarios = comentarios,
-                           eventos = eventos)
+                           eventos = eventos,
+                           ubicacion = ubicacion)
 
 @requerimiento.route('/verSolicitudes')
 def verSolicitudes():
     # Si no esta iniciada la Sesion, lo redirigo al login
     if session.get('user_active') != True or session.get('user_tipo') != "Interno":
         return redirect(url_for('auth.indexLogin'))
+    ubicacion = "Requerimiento"
     nombre = session.get('user_nombre')
     tipoUsuario = session.get('user_tipo')
     requerimientos = Requerimiento.query.all()
@@ -281,7 +288,8 @@ def verSolicitudes():
                            nombre = nombre,
                            tipoUsuario = tipoUsuario,
                            comentarios = comentarios, 
-                           eventos = eventos
+                           eventos = eventos,
+                           ubicacion = ubicacion
                            )
 
 @requerimiento.route('/asignacionSolicitudes')
@@ -289,6 +297,7 @@ def asignacionSolici():
     # Si no esta iniciada la Sesion, lo redirigo al login
     if session.get('user_active') != True or session.get('user_tipo') != "Interno":
         return redirect(url_for('auth.indexLogin'))
+    ubicacion = "Requerimiento"
     nombre = session.get('user_nombre')
     tipoUsuario = session.get('user_tipo')
     requerimientos = Requerimiento.query.filter(Requerimiento.idDestinatario == None).all()
@@ -303,7 +312,8 @@ def asignacionSolici():
                            internos = internos,
                            externos = externos, 
                            nombre = nombre,
-                           tipoUsuario = tipoUsuario)
+                           tipoUsuario = tipoUsuario,
+                           ubicacion = ubicacion)
 
 @requerimiento.route('/requerimiento/asignar', methods = ['POST'])
 def asignarRequerimiento():
@@ -324,6 +334,44 @@ def asignarRequerimiento():
     evento = Evento(idRequerimiento , accion, fechaYhora, idUsuarioResponsable, tipoUsuarioResponsable)
     db.session.add(evento)
     db.session.commit()
+
+    # ENVIO DE CORREO
+    #Función para cargar la plantilla y reemplazar variables
+    def cargar_plantilla(ruta_plantilla, **kwargs):
+        with open(ruta_plantilla, 'r') as archivo:
+            plantilla = archivo.read()
+        # Reemplazar las variables en la plantilla
+        for clave, valor in kwargs.items():
+            plantilla = plantilla.replace(f"{{{{{clave}}}}}", str(valor))
+        return plantilla
+#
+    ## Datos del correo
+    asunto = "Asignacion de requerimiento"
+    fecha = datetime.now().strftime("%Y-%m-%d")
+    usuario = UsuarioInterno.verInterno(interno)
+    nombre = usuario.nombre
+    correo = UsuarioInterno.verCorreo(interno)
+    html = cargar_plantilla('templates/emails/asignacionRequerimiento.html', fecha=fecha, nombre=nombre)
+    # Configuración del servidor SMTP
+    servidor = smtplib.SMTP("smtp.gmail.com", 587)
+    servidor.starttls()
+    servidor.login("aguspascual2001@gmail.com", "isqy rsxw laps hnqq")
+#
+    ## Crear el mensaje con formato HTML
+    msg = MIMEMultipart("alternative")
+    msg["From"] = "aguspascual2001@gmail.com"
+    msg["To"] = correo
+    msg["Subject"] = asunto
+#
+    ## Adjuntar el mensaje en formato HTML
+    parte_html = MIMEText(html, "html")
+    msg.attach(parte_html)
+#
+    ## Enviar el correo
+    servidor.sendmail("aguspascual2001@gmail.com", correo, msg.as_string())
+#
+    ## Cerrar la conexión con el servidor SMTP
+    servidor.quit()
     return redirect(url_for('requerimiento.asignacionSolici'))
 
 # Define el blueprint para CATEGORIA
@@ -334,6 +382,7 @@ def indexcategoriaRequerimiento():
     # Si no esta iniciada la Sesion, lo redirigo al login
     if session.get('user_active') != True or session.get('user_tipo') != "Interno":
         return redirect(url_for('auth.indexLogin'))
+    ubicacion = "Requerimiento"
     nombre = session.get('user_nombre')
     tipoUsuario = session.get('user_tipo')
     tiposRequerimientos = TipoRequerimiento.query.all()
@@ -342,7 +391,8 @@ def indexcategoriaRequerimiento():
                            categoriasRequerimientos = categoriasRequerimientos,
                            tiposRequerimientos = tiposRequerimientos,
                            nombre = nombre,
-                           tipoUsuario = tipoUsuario)
+                           tipoUsuario = tipoUsuario,
+                           ubicacion = ubicacion)
 
 @categoriaRequerimiento.route('/categoriaRequerimiento/registrar', methods = ['POST'])
 def registrarCategoriaRequerimiento():
@@ -389,13 +439,15 @@ def indexTipoRequerimiento():
     # Si no esta iniciada la Sesion, lo redirigo al login
     if session.get('user_active') != True or session.get('user_tipo') != "Interno":
         return redirect(url_for('auth.indexLogin'))
+    ubicacion = "Requerimiento"
     nombre = session.get('user_nombre')
     tipoUsuario = session.get('user_tipo')
     tiposrequerimientos = TipoRequerimiento.query.all()
     return render_template('/requerimientos/tipoRequerimiento.html',
                            tiposrequerimientos = tiposrequerimientos,
                            nombre = nombre,
-                           tipoUsuario = tipoUsuario)
+                           tipoUsuario = tipoUsuario,
+                           ubicacion = ubicacion)
 
 @tipoRequerimiento.route('/tipoRequerimiento/registrar', methods = ['POST'])
 def registrarTipoRequerimiento():

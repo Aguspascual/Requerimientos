@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, Blueprint, session
+from flask import Flask, render_template, request, redirect, url_for, Blueprint, session, flash
 from models.UsuarioExterno import UsuarioExterno
 from utils.db import db
 from werkzeug.security import generate_password_hash
@@ -13,13 +13,15 @@ usuarioExterno = Blueprint('usuarioExterno', __name__)
 def RegistrarExterno():
     # Obtengo los datos del formulario
     nombre = request.form['nombre']
+    apellido = request.form['apellido']
     usuario = request.form['usuario']
     contrasena = request.form['contrasena']
+    contrasenax2 = request.form['contrasenax2']
     correo = request.form['correo']
     tipoUsuario = "Usuario Externo"
     cuil = request.form['cuil']
     descripcion = request.form['descripcion']
-    destacado = request.form.get('destacado')
+    destacado = request.form.get('destacado')#ACOMODAR EL FORM PARA ESTO PORQUE LO SAQUE SIN QUERER
     if destacado:
     # El checkbox está marcado
         destacado = True
@@ -27,7 +29,10 @@ def RegistrarExterno():
         # El checkbox no está marcado
         destacado = False
     empresa = request.form['empresa']
-    #print(destacado)
+    if contrasena != contrasenax2:
+        flash("Las contraseñas no coinciden. Por favor, inténtalo de nuevo.", "danger")
+    
+    nombre = nombre +" "+ apellido
     # Hashear la contraseña antes de crear el usuario
     hashed_contrasena = generate_password_hash(contrasena)
     # Creo el usuario

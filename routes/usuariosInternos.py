@@ -1,4 +1,4 @@
-from flask import Flask, redirect, Blueprint, request, url_for, session
+from flask import Flask, redirect, Blueprint, request, url_for, session, flash
 from models.UsuarioInterno import UsuarioInterno
 from utils.db import db
 from werkzeug.security import generate_password_hash
@@ -17,21 +17,29 @@ def RegistrarInterno():
     # Obtengo los datos del formulario
     legajo = request.form['legajo']
     nombre = request.form['nombre']
+    apellido = request.form['apellido']
     usuario = request.form['usuario']
     contrasena = request.form['contrasena']
+    contrasenax2 = request.form['contrasenax2']
     correo = request.form['correo']
     cargo = request.form['cargo']
     departamento = request.form['departamento']
     tipoUsuario = "Usuario Interno"
+    # Verifico si las contraseñas coinciden
+    if contrasena != contrasenax2:
+        flash("Las contraseñas no coinciden. Por favor, inténtalo de nuevo.", "danger")
+    
+    nombre = nombre +" "+ apellido
+    
     # Hasheo la contraseña 
     hashed_contrasena = generate_password_hash(contrasena)
     # Creo el usuario
     nuevo_usuario = UsuarioInterno(legajo, nombre, usuario, hashed_contrasena, correo, tipoUsuario, cargo ,departamento)
     # Lo agrego a la base de datos
     db.session.add(nuevo_usuario)
-    db.session.commit()
+    #db.session.commit()
 
-    # Envio de correo
+    # ENVIO DE CORREO
     # Función para cargar la plantilla y reemplazar variables
     def cargar_plantilla(ruta_plantilla, **kwargs):
         with open(ruta_plantilla, 'r') as archivo:

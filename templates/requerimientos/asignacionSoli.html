@@ -14,7 +14,7 @@
         <div class="row">
             <div class="col">
                 <!--Tabla con requerimientos propios-->
-                <table class="table" id="misSolicitudes">
+                <table class="table table-bordered text-center" id="misSolicitudes">
                     <thead>
                         <tr class="table table-light">
                             <th>Codigo</th>
@@ -71,7 +71,7 @@
                                                     <h5 class="modal-title" id="modalAsignarLabel{{requerimiento.id}}">Asignar Requerimiento</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
-                                                <form action="/requerimiento/asignar" method="post">
+                                                <form action="/requerimiento/asignar" method="post" onsubmit="return confirm('¿Estás seguro de que deseas asignar a una persona a este requerimiento?');">
                                                     <div class="modal-body">
                                                         <div class="form-group">
                                                             <input type="text" class="form-control buscador" placeholder="Buscar Interno..">
@@ -79,7 +79,7 @@
                                                         <input type="number" name="idRequerimiento" value="{{requerimiento.id}}" hidden>
                                                         <div class="form-floating mb-3">
                                                             <span>Interno</span>
-                                                            <select class="form-select internoSelect" name="interno">
+                                                            <select class="form-select internoSelect" name="interno" required>
                                                                 <option value="None" hidden>Seleccionar Interno</option>
                                                                 {% for interno in internos %}
                                                                     <option value="{{ interno.id }}" data-tipo="{{ interno.nombre }}">{{ interno.nombre }}</option>

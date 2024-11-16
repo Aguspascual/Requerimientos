@@ -22,3 +22,7 @@ class UsuarioExterno(db.Model):
         self.descripcion = descripcion
         self.destacado = destacado
         self.empresa = empresa
+
+    def verExternos():
+        externos = UsuarioExterno.query.all()
+        return externos

@@ -5,7 +5,7 @@
       <div class="row h-100">
         <div class="col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100">
           <div class="d-table-cell align-middle">
-            <div class="card">
+            <div class="card" style="border-radius: 15px;">
               <div class="card-body">
                 <div class="m-sm-4">
                   <div class="text-center">
@@ -14,15 +14,15 @@
                   <form action="/admin/login/iniciar" method="post">
                     <div class="form-group">
                       <label>Usuario</label>
-                      <input class="form-control form-control-lg" type="email" name="usuario" placeholder="Ingrese su usuario" required >
+                      <input class="form-control form-control-lg" type="text" name="usuario" placeholder="Ingrese su usuario" required >
                     </div>
-                    <div class="form-group">
+                    <div class="form-group mt-3">
                       <label>Contraseña</label>
                       <input class="form-control form-control-lg" type="password" name="contrasena" placeholder="Ingrese su contraseña" required >
                     </div>
-                    <div class="text-center mt-3">
-                      <button type="submit" class="btn btn-lg btn-primary">Ingresar</button>
-                      <a href="/registrarExterno"><button type="button" class="btn btn-lg btn-primary">Registrarse Externo</button></a>
+                    <div class="text-center mt-4">
+                      <button type="submit" class="btn btn-lg btn-primary" style="width: 220px; margin-right: 90px;">Ingresar</button>
+                      <a href="/registrarExterno"><button type="button" class="btn btn-lg btn-primary" style="width: 220px;">Registrarse Externo</button></a>
                     </div>
                     </div>
                   </form>
