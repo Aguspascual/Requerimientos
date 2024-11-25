@@ -37,7 +37,7 @@ def RegistrarInterno():
     nuevo_usuario = UsuarioInterno(legajo, nombre, usuario, hashed_contrasena, correo, tipoUsuario, cargo ,departamento)
     # Lo agrego a la base de datos
     db.session.add(nuevo_usuario)
-    #db.session.commit()
+    db.session.commit()
 
     # ENVIO DE CORREO
     # Función para cargar la plantilla y reemplazar variables

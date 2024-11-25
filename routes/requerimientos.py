@@ -56,7 +56,7 @@ def registrarRequerimiento():
     idCategoriaRequerimiento = request.form.get('idCategoria')
     idDestinatario = request.form.get('idDestinatario')
     if idDestinatario == '':
-        idDestinatario = None
+        idDestinatario = 0
     prioridad = request.form.get('prioridad')
 
     # Determino el estado del requerimiento
@@ -300,11 +300,15 @@ def asignacionSolici():
     ubicacion = "Requerimiento"
     nombre = session.get('user_nombre')
     tipoUsuario = session.get('user_tipo')
-    requerimientos = Requerimiento.query.filter(Requerimiento.idDestinatario == None).all()
+    requerimientos = Requerimiento.query.filter(Requerimiento.idDestinatario == 0).all()
     tiposRequerimientos = TipoRequerimiento.query.all()
     catRequerimientos = CategoriaRequerimiento.query.all()
     internos = UsuarioInterno.query.all()
     externos = UsuarioExterno.query.all()
+    for requerimiento in requerimientos:
+        print(requerimiento)
+
+    
     return render_template('/requerimientos/asignacionSoli.html',
                            requerimientos = requerimientos,
                            tiposRequerimientos = tiposRequerimientos,

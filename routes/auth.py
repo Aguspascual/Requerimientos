@@ -61,15 +61,14 @@ def cambiarContraseñaModificar():
     contrasena = request.form['contrasena']
     contrasenaNueva = request.form['contrasenaNueva']
     contrasenaNueva2 = request.form['contrasenaNueva2']
-    
-    usuario_id = session.get('user_usuario')
-    
+    usuario = session.get('user_usuario')
+    id = session['user_id']
     # Verifica que la nueva contraseña coincida
     if contrasenaNueva == contrasenaNueva2:
         if session.get('user_tipo') == "Interno":
-            usuario = UsuarioInterno.query.filter_by(correo=usuario_id).first()
+            usuario = UsuarioInterno.query.filter_by(id=id).first()
         elif session.get('user_tipo') == "Externo":
-            usuario = UsuarioExterno.query.filter_by(correo=usuario_id).first()
+            usuario = UsuarioExterno.query.filter_by(id=id).first()
         
         # Verifica la contraseña actual
         if usuario and check_password_hash(usuario.contrasena, contrasena):

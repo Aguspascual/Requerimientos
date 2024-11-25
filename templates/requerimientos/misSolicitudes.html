@@ -99,6 +99,17 @@
                                                     {% endfor %}
                                                 {% endif %}
                                             </h6>
+                                            <h6>Usuario Destinatario: 
+                                                {% if requerimiento.idDestinatario != 0 %}
+                                                    {% for interno in internos %}
+                                                        {% if interno.id == requerimiento.idDestinatario %}
+                                                        <span style="color: rgb(94, 94, 94);">{{ interno.nombre }}</span>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <span style="color: rgb(94, 94, 94);">Sin definir</span>
+                                                {% endif %}
+                                            </h6>
                                             <h6>Fecha y Hora de Alta:<span style="color: rgb(94, 94, 94);"> {{ requerimiento.fechaYhora }}</span></h6>
                                             <h6>Asunto:<span style="color: rgb(94, 94, 94);">{{ requerimiento.asunto }}</span></h6>
                                             <h6>Descripción: <span style="color: rgb(94, 94, 94);">{{ requerimiento.descripcion }}</span></h6>
