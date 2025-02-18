@@ -36,7 +36,7 @@ app.register_blueprint(auth)
 @app.route('/')
 def index():
     return render_template('/auth/auth.html')
-
+    
 
 # Todo lo que se ejecute cuando inicio app.py en forma secuencial
 if __name__ == "__main__":
