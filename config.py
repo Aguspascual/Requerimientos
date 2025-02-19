@@ -6,11 +6,9 @@ class Seguridad:
 class Config (Seguridad):
     # Heredo de la clase Seguridad
     #SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'postgresql://postgres:admin@localhost/requerimientos')
-    #SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'mysql://root:@localhost/requerimientos')
-    SQLALCHEMY_DATABASE_URI = os.getenv(
-    'DATABASE_URL',
-    'mysql://apascualmarcos:001185Agus@apascualmarcos.mysql.pythonanywhere-services.com/apascualmarcos$requerimientos'
-)
+    
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:wLeDuriQHbkUnhSRnOCxvGeSzhBqdsuX@gondola.proxy.rlwy.net:12820/railway'
+    
 
 
 
