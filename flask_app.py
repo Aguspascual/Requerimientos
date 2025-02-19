@@ -9,10 +9,10 @@ from routes.auth import auth
 from config import Config
 import smtplib
 from email.mime.text import MIMEText
-import pymysql
+
 
 app = Flask(__name__)
-pymysql.install_as_MySQLdb()
+
 
 # Cargar la configuración desde config.py
 app.config.from_object(Config)
