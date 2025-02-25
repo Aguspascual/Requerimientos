@@ -1,205 +1,151 @@
 {% include '/includes/cabecera.html' %}
-
 <main>
     <div class="container">
-        <div class="row">
-            <div class="col">
-                <div class="form-group">
-                    <br>
-                    <input type="text" class="form-control" name="buscador" id="buscadorPrincipal" placeholder="Buscar por Asunto">
-                    <br>
+        <div class="row mt-4">
+            <div class="col-md-4 col-12">
+                <div class="card bg-light mb-2">
+                    <h4 class="card-header">Registrar Categoria</h4>
+                    <div class="card-body">
+                        <!--Registrar Categoria-->
+                        <form action="/categoriaRequerimiento/registrar" method="post">
+                            <div>
+                                <span class="obligatorio">Tipo<h6 class="asterisco">*</h6></span>
+                                <select class="form-select" id="tipoSelect" name="idTipo" required>
+                                    <option value="" hidden>Seleccionar</option>
+                                    {% for tipo in tiposRequerimientos %}
+                                        <option value="{{ tipo.id }}">{{ tipo.tipo }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div>
+                                <span class="obligatorio">Categoria<h6 class="asterisco">*</h6></span>
+                                <input type="text" class="form-control" name="descripcion" placeholder="Categoria" required>
+                            </div>
+                            <div class="asterisco">
+                                <span class="textObligatorio">Los campos marcados con * son de carácter obligatorio</span>
+                            </div>
+                            <div>
+                                <br>
+                                <button type="submit" class="form-control btn btn-success">Agregar</button>
+                            </div>
+                        </form>
+                        <!--Fin registrar Categoria-->
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col">
+            <div class="col-md-8 col-12">
+                <div class="form-group">
+                    <input type="text" class="form-control" name="buscador" id="buscador" placeholder="Buscar">
+                </div>
                 <div class="table-responsive">
-                    <!--Tabla con requerimientos propios-->
-                    <table class="table table-bordered text-left" id="misSolicitudes">
+                    <!--Tabla de categorias-->
+                    <table class="table mt-2 table-bordered text-left" id="usuarios">
                         <thead>
-                            <tr class="table-light">
+                            <tr class="table table-light">
                                 <th>Codigo</th>
                                 <th>Tipo</th>
                                 <th>Categoria</th>
-                                <th>Fecha de alta</th>
-                                <th>Asunto</th>
-                                <th>Propietario</th>
                                 <th>Accion</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for requerimiento in requerimientos %}
-                                <tr>
-                                    <td>{{ requerimiento.codigo }}</td>
-                                    {% for tipoRequerimiento in tiposRequerimientos %}
-                                        {% if tipoRequerimiento.id == requerimiento.idTipoRequerimiento %}
-                                            <td>{{ tipoRequerimiento.tipo }}</td>
-                                        {% endif %}
-                                    {% endfor %}
-                                    {% for catRequerimiento in catRequerimientos %}
-                                        {% if catRequerimiento.id == requerimiento.idCategoriaRequerimiento %}
-                                            <td>{{ catRequerimiento.descripcion }}</td>
-                                        {% endif %}
-                                    {% endfor %}
-                                    <td>{{ requerimiento.fechaYhora }}</td>
-                                    <td>{{ requerimiento.asunto }}</td>
-                                    <td>
-                                        {% if requerimiento.tipoEmisor == "Interno" %}
-                                            {% for interno in internos %}
-                                                {% if interno.id == requerimiento.idEmisor %}
-                                                    {{ interno.nombre }}
-                                                {% endif %}
-                                            {% endfor %}
-                                        {% endif %}
-                                        {% if requerimiento.tipoEmisor == "Externo" %}
-                                            {% for externo in externos %}
-                                                {% if externo.id == requerimiento.idEmisor %}
-                                                    {{ externo.nombre }}
-                                                {% endif %}
-                                            {% endfor %}
-                                        {% endif %}
-                                    </td>
-                                    <td id="accion">
-                                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAsignar{{ requerimiento.id }}">
-                                            <i class="bi bi-person-add"></i>
-                                        </button>
-                                        <!-- Modal Asignar -->
-                                        <div class="modal fade" id="modalAsignar{{requerimiento.id}}" tabindex="-1" aria-labelledby="modalAsignarLabel{{requerimiento.id}}" aria-hidden="true">
-                                            <div class="modal-dialog modal-lg">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="modalAsignarLabel{{requerimiento.id}}">Asignar responsable</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    
-                                                    <form id="formRequerimiento" data-requerimiento-id="{{requerimiento.id}}" action="/requerimiento/asignar" method="post">
-                                                        <div class="modal-body">
-                                                            <div class="form-group">
-                                                                <input type="text" class="form-control buscador" placeholder="Buscar Interno..">
-                                                            </div>
-                                                            <input type="number" name="idRequerimiento" value="{{requerimiento.id}}" hidden>
-                                                            <div class="form-floating mb-3">
-                                                                <span>Interno</span>
-                                                                <select class="form-select internoSelect" name="interno" required>
-                                                                    <option value="None" hidden>Seleccionar Interno</option>
-                                                                    {% for interno in internos %}
-                                                                        <option value="{{ interno.id }}" data-tipo="{{ interno.nombre }}">{{ interno.nombre }}</option>
-                                                                    {% endfor %}
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                                            <!--<button type="submit" class="btn btn-success">Asignar</button>-->
-                                                            <button type="button" id="openConfirmationModal{{requerimiento.id}}" class="btn btn-success" data-requerimiento-id="{{requerimiento.id}}">Asignar</button>
-
-                                                        </div>
-
-                                                        <!-- Modal de confirmación -->
-                                                        <div class="modal fade" id="confirmationModal{{requerimiento.id}}" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-                                                            <div class="modal-dialog">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-header">
-                                                                        <h5 class="modal-title" id="confirmationModalLabel">Confirmación</h5>
-                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                                                                    </div>
-                                                                    <div class="modal-body d-flex align-items-center">
-                                                                        <i class="fas fa-exclamation-triangle text-warning me-3" style="font-size: 24px;"></i>
-                                                                        <span>¿Estás seguro que deseas asignar a este usuario?</span>
-                                                                        </div>
-                                                                    <div class="modal-footer">
-                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                                                        <button type="button" id="confirmSubmit{{requerimiento.id}}" class="btn btn-success">Confirmar</button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </form>
+                            {% for categoria in categoriasRequerimientos %}
+                            <tr>
+                                <td>{{categoria.id}}</td>
+                                {% for tipo in tiposRequerimientos %}
+                                    {% if tipo.id == categoria.idTipo %}
+                                        <td>{{tipo.tipo}}</td>
+                                    {% endif %}
+                                {% endfor %}
+                                <td>{{categoria.descripcion}}</td>
+                                <td class="text-center">
+                                    <form action="/categoria/eliminar" method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta categoría?');">
+                                        <div class="btn-group" role="group" aria-label="Basic example">
+                                            <!-- Modals -->
+                                            <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalModificar{{categoria.id }}" style="background-color: #2f87ed;">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                                  </svg>
+                                            <input type="number" name="id" value="{{categoria.id}}" hidden>
+                                            <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                        </div>
+                                    </form>
+                        
+                                <!-- Modal Modificar -->
+                                    <div class="modal fade" id="modalModificar{{categoria.id}}" tabindex="-1" aria-labelledby="modalModificarLabel{{categoria.id}}" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="modalVerLabel{{categoria.id}}">Categoria de Requerimiento</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
+                                                <form action="/categoria/modificar" method="post" onsubmit="return confirm('¿Estás seguro de que deseas modificar esta categoría?');">
+                                                    <div class="modal-body">
+                                                        <div class="form-floating mb-3">
+                                                            {% for tipo in tiposRequerimientos %}
+                                                                {% if tipo.id == categoria.idTipo %}
+                                                                    <input type="text" class="form-control" name="tipo" value="{{tipo.tipo}}" placeholder="Tipo" disabled>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                            <label for="nombre">Tipo</label>
+                                                        </div>
+                                                        <div class="form-floating">
+                                                            <input type="number" name="id" value="{{categoria.id}}" hidden>
+                                                            <input type="text" class="form-control" name="descripcion" placeholder="Categoria" value="{{categoria.descripcion}}" required>
+                                                            <label for="usuario">Categoria</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                                        <button type="submit" class="btn btn-success">Modificar</button>
+                                                    </div>
+                                                </form>
                                             </div>
                                         </div>
-                                        <!-- Fin modal Asignar -->
-                                    </td>
-                                </tr>
+                                    </div>
+                                </td>
+                                <!--Fin modal ver-->
+                            </tr>
                             {% endfor %}
-                        </tbody>
+                        </tbody>                        
                     </table>
-                    <!--Fin tabla con requerimientos propios-->
+                    <!--Fin tabla de categorias-->
                 </div>
             </div>
         </div>
     </div>
 </main>
-
-<!--Buscador de requerimientos-->
+ 
+<!--Buscador de categorias-->
 <script>
     $(document).ready(function(){
-        $('#buscadorPrincipal').on('keyup', function() {
-            var inputValue = $(this).val().toLowerCase();
-            $('#misSolicitudes tbody tr').each(function() {
-                var rowText = $(this).text().toLowerCase();
-                if (rowText.includes(inputValue)) {
-                    $(this).show();
-                } else {
+        $("#buscador").keyup(function(){
+            _this = this;
+            $.each($("#usuarios tbody tr"), function() {
+                if($(this).text().toLowerCase().indexOf($(_this).val().toLowerCase()) === -1)
                     $(this).hide();
-                }
-            });
-        });
-    });
-</script>
-<!--Buscador de internos-->
-<script>
-    $(document).ready(function(){
-        $('.buscador').on('keyup', function() {
-            var inputValue = $(this).val().toLowerCase();
-            var $modal = $(this).closest('.modal'); // Selecciona el modal correspondiente
-            $modal.find('.internoSelect option').each(function() {
-                var optionText = $(this).text().toLowerCase();
-                if (optionText.includes(inputValue)) {
+                else
                     $(this).show();
-                } else {
-                    $(this).hide();
-                }
-            });
-        });
-    });
-</script>
-
-<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>-->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Para todos los botones "Asignar"
-        document.querySelectorAll('[id^="openConfirmationModal"]').forEach(button => {
-            button.addEventListener('click', function () {
-                const requerimientoId = this.getAttribute('data-requerimiento-id');
-                const confirmationModal = new bootstrap.Modal(document.getElementById(`confirmationModal${requerimientoId}`));
-                confirmationModal.show();
-            });
-        });
-
-        // Para todos los botones "Confirmar"
-        document.querySelectorAll('[id^="confirmSubmit"]').forEach(button => {
-            button.addEventListener('click', function () {
-                const requerimientoId = this.id.replace('confirmSubmit', '');
-                const form = document.querySelector(`#formRequerimiento[data-requerimiento-id="${requerimientoId}"]`);
-                const confirmationModal = bootstrap.Modal.getInstance(document.getElementById(`confirmationModal${requerimientoId}`));
-
-                // Cerrar el modal de confirmación
-                confirmationModal.hide();
-
-                // Enviar el formulario
-                form.submit();
             });
         });
     });
 </script>
 
 <style>
-    th, td{
+    .obligatorio{
+        display: flex;
         text-align: left;
+        margin-top: 5px;
+    }                             
+    
+    .asterisco{
+        color: red;
+        margin: 0;
     }
-    #accion{
-        text-align: center;
+
+    .textObligatorio{
+        font-size: 13px;
     }
 </style>
 
