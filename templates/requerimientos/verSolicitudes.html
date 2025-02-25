@@ -1,14 +1,18 @@
 {% include '/includes/cabecera.html' %}
 <main>
     <div class="container">
-        <div class="row mt-3">
+        <div class="row">
             <div class="col">
-                <input class="form-control" type="text" id="buscador" placeholder="Escribe para buscar un requerimiento..">
+                <div class="form-group">
+                    <br>
+                    <input type="text" class="form-control" id="buscador" placeholder="Escribe para buscar un requerimiento..">
+                    <br>
+                </div>
             </div>
         </div>
-        <div class="row mt-3">
-            <!--Filtros para tabla-->
-            <div class="col-4">
+        <div class="row">
+            <!-- Filtros para tabla -->
+            <div class="col-12 col-md-4">
                 <div class="form-group">
                     <label for="tipoFiltro">Tipo:</label>
                     <select class="form-control" id="tipoFiltro">
@@ -19,7 +23,7 @@
                     </select>
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-12 col-md-4">
                 <div class="form-group">
                     <label for="categoriaFiltro">Categoría:</label>
                     <select class="form-control" id="categoriaFiltro">
@@ -30,7 +34,7 @@
                     </select>
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-12 col-md-4">
                 <div class="form-group">
                     <label for="estadoFiltro">Estado:</label>
                     <select class="form-control" id="estadoFiltro">
@@ -40,84 +44,80 @@
                     </select>
                 </div>
             </div>
-            <!--Fin filtros para tabla-->
+            <!-- Fin filtros para tabla -->
         </div>
-
-        <div class="row mt-2">
+        <br>
+        <div class="row">
             <div class="col">
-                <!--Tabla de solicitudes-->
-                <table class="table table-bordered text-center" id="solicitudes">
-                    <thead>
-                        <tr class="table-light">
-                            <th>Código</th>
-                            <th>Prioridad</th>
-                            <th>Tipo</th>
-                            <th>Categoría</th>
-                            <th>Fecha de alta</th>
-                            <th>Estado</th>
-                            <th>Asunto</th>
-                            <th>Propietario</th>
-                            <th>Tipo Propietario</th>
-                            <th>Accion</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for requerimiento in requerimientos %}
-                            <tr>
-                                <td>{{ requerimiento.codigo }}</td>
-                                <td>{{ requerimiento.prioridad }}</td>
-                                <td>
-                                    {% for tipoRequerimiento in tiposRequerimientos %}
-                                        {% if tipoRequerimiento.id == requerimiento.idTipoRequerimiento %}
-                                            {{ tipoRequerimiento.tipo }}
-                                        {% endif %}
-                                    {% endfor %}
-                                </td>
-                                <td>
-                                    {% for catRequerimiento in catRequerimientos %}
-                                        {% if catRequerimiento.id == requerimiento.idCategoriaRequerimiento %}
-                                            {{ catRequerimiento.descripcion }}
-                                        {% endif %}
-                                    {% endfor %}
-                                </td>
-                                <td>{{ requerimiento.fechaYhora }}</td>
-                                <td>{{ requerimiento.estado }}</td>
-                                <td>{{ requerimiento.asunto }}</td>
-                                <td>
-                                    {% if requerimiento.tipoEmisor == "Interno" %}
-                                        {% for interno in internos %}
-                                            {% if interno.id == requerimiento.idEmisor %}
-                                                {{ interno.nombre }}
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% else %}
-                                        {% for externo in externos %}
-                                            {% if externo.id == requerimiento.idEmisor %}
-                                                {{ externo.nombre }}
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% endif %}
-                                </td>
-                                <td>{{ requerimiento.tipoEmisor }}</td>
-                                <td>
-                                    <div class="btn-group" role="group" aria-label="Basic example">
-                                        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalVer{{ requerimiento.id }}">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
-                                                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
-                                                <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
-                                            </svg>
-                                        </button>
-                                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalEventos{{ requerimiento.id }}">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-card-list" viewBox="0 0 16 16">
-                                                <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2z"/>
-                                                <path d="M5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8m0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m-1-5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0M4 8a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m0 2.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </td>
+                <!-- Contenedor para hacer la tabla responsive -->
+                <div class="table-responsive">
+                    <!-- Tabla de solicitudes -->
+                    <table class="table table-bordered text-left" id="solicitudes">
+                        <thead>
+                            <tr class="table-light">
+                                <th>Código</th>
+                                <th>Prioridad</th>
+                                <th>Tipo</th>
+                                <th>Categoría</th>
+                                <th>Fecha de alta</th>
+                                <th>Estado</th>
+                                <th>Asunto</th>
+                                <th>Propietario</th>
+                                <th>Tipo Propietario</th>
+                                <th>Acción</th>
                             </tr>
-                            <!-- Modal Ver -->
-                            <div class="modal fade" id="modalVer{{ requerimiento.id }}" tabindex="-1" aria-labelledby="modalVerLabel{{ requerimiento.id }}" aria-hidden="true">
+                        </thead>
+                        <tbody>
+                            {% for requerimiento in requerimientos %}
+                                <tr>
+                                    <td>{{ requerimiento.codigo }}</td>
+                                    <td>{{ requerimiento.prioridad }}</td>
+                                    <td>
+                                        {% for tipoRequerimiento in tiposRequerimientos %}
+                                            {% if tipoRequerimiento.id == requerimiento.idTipoRequerimiento %}
+                                                {{ tipoRequerimiento.tipo }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        {% for catRequerimiento in catRequerimientos %}
+                                            {% if catRequerimiento.id == requerimiento.idCategoriaRequerimiento %}
+                                                {{ catRequerimiento.descripcion }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                    <td>{{ requerimiento.fechaYhora }}</td>
+                                    <td>{{ requerimiento.estado }}</td>
+                                    <td>{{ requerimiento.asunto }}</td>
+                                    <td>
+                                        {% if requerimiento.tipoEmisor == "Interno" %}
+                                            {% for interno in internos %}
+                                                {% if interno.id == requerimiento.idEmisor %}
+                                                    {{ interno.nombre }}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% else %}
+                                            {% for externo in externos %}
+                                                {% if externo.id == requerimiento.idEmisor %}
+                                                    {{ externo.nombre }}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ requerimiento.tipoEmisor }}</td>
+                                    <td>
+                                        <div class="btn-group" role="group" aria-label="Acciones">
+                                            <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalVer{{ requerimiento.id }}">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalEventos{{ requerimiento.id }}">
+                                                <i class="bi bi-card-list"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                             <!-- Modal Ver -->
+                             <div class="modal fade" id="modalVer{{ requerimiento.id }}" tabindex="-1" aria-labelledby="modalVerLabel{{ requerimiento.id }}" aria-hidden="true">
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -156,7 +156,6 @@
                                                     {% endfor %}
                                                 {% endif %}
                                             </h6>
-
                                             <h6>Usuario Destinatario: 
                                                 {% if requerimiento.idDestinatario != 0 %}
                                                     {% for interno in internos %}
@@ -168,9 +167,8 @@
                                                     <span style="color: rgb(94, 94, 94);">Sin definir</span>
                                                 {% endif %}
                                             </h6>
-
                                             <h6>Fecha y Hora de Alta:<span style="color: rgb(94, 94, 94);"> {{ requerimiento.fechaYhora }}</span></h6>
-                                            <h6>Asunto: <span style="color: rgb(94, 94, 94);">{{ requerimiento.asunto }}</span></h6>
+                                            <h6>Asunto:<span style="color: rgb(94, 94, 94);">{{ requerimiento.asunto }}</span></h6>
                                             <h6>Descripción: <span style="color: rgb(94, 94, 94);">{{ requerimiento.descripcion }}</span></h6>
                                             <h6>Archivos Adjuntos:</h6>
                                             <ul id="listaArchivosAdjuntos">
@@ -238,7 +236,6 @@
                                             </div>
                                             <div class="input-container">
                                                 <form action="/comentario/registrar" method="POST" enctype="multipart/form-data">
-
                                                     <div class="mb-3">
                                                         <input type="number" name="idRequerimiento" value="{{requerimiento.id}}" hidden>
                                                         <label for="asunto" class="form-label">Asunto</label>
@@ -330,6 +327,7 @@
                                                                                                     {{ externo.nombre }}
                                                                                                 {% endif %}
                                                                                             {% endfor %}
+                                                                                            
                                                                                         {% endif %}
                                                                                         {% if comentario.tipoUsuario == "Interno" %} 
                                                                                             {% for interno in internos %}
@@ -346,7 +344,6 @@
                                                                     </div>
                                                                     <div class="input-container">
                                                                         <form action="/comentario/registrar" method="POST" enctype="multipart/form-data">
-                    
                                                                             <div class="mb-3">
                                                                                 <input type="number" name="idRequerimiento" value="{{requerimiento.id}}" hidden>
                                                                                 <label for="asunto" class="form-label">Asunto</label>
@@ -356,17 +353,9 @@
                                                                                 <label for="descripcion" class="form-label">Descripción</label>
                                                                                 <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required></textarea>
                                                                             </div>
-                                                                            <div class="col-12">
-                                                                                <span>Ingresar Archivos</span>
-                                                                                <input type="file" id="archivos" name="archivos" class="form-control" accept=".doc,.docx,.xls,.xlsx,.pdf" multiple>
-                                                                                <small id="fileHelp" class="form-text text-muted">Se permiten hasta 5 archivos en formatos Word, Excel y PDF.</small>
-                                                                                <div id="fileWarning" class="text-danger mt-2" style="display: none;"></div>
-                                                                            </div>
-                                                                            <input type="text" value="misSolicitudes" name="ubicacion" hidden>
                                                                             <button type="submit" class="btn btn-primary">Agregar Comentario</button>
                                                                         </form>
-                                                                    </div>
-                                                                    <!--ASIGNACION DE DESTINATARIO-->
+                                                                    <!--ASIGNACION DE DESTINATARIO -->
                                                                     {% elif evento.accion == "Asignacion de Caso" %}
                                                                         {% for interno in internos %}
                                                                             {% if interno.id == requerimiento.idDestinatario %}
@@ -391,18 +380,18 @@
                                 </div>
                             </div>
                             <!--Fin modal eventos-->
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <!--Fin tabla de solicitudes-->
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <!-- Fin tabla de solicitudes -->
+                </div>
             </div>
         </div>
     </div>
 </main>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    //Buscador de Solicitudes
+    // Código de búsqueda y filtrado (sin cambios)
     $(document).ready(function() {
         $('#buscador').on('keyup', function() {
             var inputValue = $(this).val().toLowerCase();
