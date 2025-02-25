@@ -199,7 +199,7 @@ def misSolicitudes():
     # Si no esta iniciada la Sesion, lo redirigo al login
     if session.get('user_active') != True:
         return redirect(url_for('auth.indexLogin'))
-    ubicacion = "MisSolicitudes"
+    ubicacion = "Requerimiento"
     nombre = session.get('user_nombre')
     tipoUsuario = session.get('user_tipo')
     user_id = session.get('user_id')
@@ -390,7 +390,7 @@ def indexcategoriaRequerimiento():
     # Si no esta iniciada la Sesion, lo redirigo al login
     if session.get('user_active') != True or session.get('user_tipo') != "Interno":
         return redirect(url_for('auth.indexLogin'))
-    ubicacion = "Requerimiento"
+    ubicacion = "Gestionar"
     nombre = session.get('user_nombre')
     tipoUsuario = session.get('user_tipo')
     tiposRequerimientos = TipoRequerimiento.query.all()
@@ -451,7 +451,7 @@ def indexTipoRequerimiento():
     # Si no esta iniciada la Sesion, lo redirigo al login
     if session.get('user_active') != True or session.get('user_tipo') != "Interno":
         return redirect(url_for('auth.indexLogin'))
-    ubicacion = "Requerimiento"
+    ubicacion = "Gestionar"
     nombre = session.get('user_nombre')
     tipoUsuario = session.get('user_tipo')
     tiposrequerimientos = TipoRequerimiento.query.all()
