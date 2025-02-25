@@ -121,13 +121,13 @@
                                                     {% if requerimiento.archivos != [] %}
                                                         {% for archivo in requerimiento.archivos %}
                                                             <li>
-                                                                <a href="{{ url_for('static', filename='img/archivos/' + archivo.nombre) }}" target="_blank">
-                                                                    {{ archivo.nombre.split('_', 1)[1] }}  <!-- Quita la parte antes del primer '_' -->
+                                                                <a href="{{ url_for('archivo.servir_archivo', nombre_archivo=archivo.nombre) }}" target="_blank">
+                                                                    {{ archivo.nombre.split('_', 1)[1] }}
                                                                 </a>
                                                             </li>
                                                         {% endfor %}
                                                         <br>
-                                                    {% endif %}
+                                                    {% endif %}    
                                                 </ul>
                                                 <h6>Comentarios:</h6>
                                                 <div class="comentarios-container" style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 20px;">
@@ -188,17 +188,17 @@
                                                             <label for="descripcion" class="form-label">Descripción</label>
                                                             <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required></textarea>
                                                         </div>
+                                                        <div class="col-12">
+                                                            <span>Ingresar Archivos</span>
+                                                            <input type="file" id="archivos" name="archivos" class="form-control" accept=".doc,.docx,.xls,.xlsx,.pdf" multiple>
+                                                            <small id="fileHelp" class="form-text text-muted">Se permiten hasta 5 archivos en formatos Word, Excel y PDF.</small>
+                                                            <div id="fileWarning" class="text-danger mt-2" style="display: none;"></div>
+                                                        </div>
                                                         <input type="text" value="misSolicitudes" name="ubicacion" hidden>
                                                         <button type="submit" class="btn btn-primary">Agregar Comentario</button>
                                                     </form>
                                                 </div>
                                                 <div id="comentariosContainer"></div>
-                                                <div class="col-12">
-                                                    <span>Ingresar Archivos</span>
-                                                    <input type="file" id="archivos" name="archivos" class="form-control" accept=".doc,.docx,.xls,.xlsx,.pdf" multiple>
-                                                    <small id="fileHelp" class="form-text text-muted">Se permiten hasta 5 archivos en formatos Word, Excel y PDF.</small>
-                                                    <div id="fileWarning" class="text-danger mt-2" style="display: none;"></div>
-                                                </div>
                                             </div>
                                             <div class="modal-footer">
                                                 {% if requerimiento.estado == "Asignado" %}
@@ -240,4 +240,5 @@
         return confirm("¿Estás seguro de que deseas cerrar este caso? Esta acción no se puede deshacer.");
     }
 </script>
+
 {% include '/includes/pie.html' %}
