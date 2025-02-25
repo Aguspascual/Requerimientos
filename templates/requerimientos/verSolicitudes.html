@@ -63,7 +63,6 @@
                                 <th>Estado</th>
                                 <th>Asunto</th>
                                 <th>Propietario</th>
-                                <th>Tipo Propietario</th>
                                 <th>Acción</th>
                             </tr>
                         </thead>
@@ -104,7 +103,6 @@
                                             {% endfor %}
                                         {% endif %}
                                     </td>
-                                    <td>{{ requerimiento.tipoEmisor }}</td>
                                     <td>
                                         <div class="btn-group" role="group" aria-label="Acciones">
                                             <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalVer{{ requerimiento.id }}">
