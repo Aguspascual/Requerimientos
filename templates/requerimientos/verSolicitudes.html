@@ -353,8 +353,16 @@
                                                                                 <label for="descripcion" class="form-label">Descripción</label>
                                                                                 <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required></textarea>
                                                                             </div>
+                                                                            <div class="col-12">
+                                                                                <span>Ingresar Archivos</span>
+                                                                                <input type="file" id="archivos" name="archivos" class="form-control" accept=".doc,.docx,.xls,.xlsx,.pdf" multiple>
+                                                                                <small id="fileHelp" class="form-text text-muted">Se permiten hasta 5 archivos en formatos Word, Excel y PDF.</small>
+                                                                                <div id="fileWarning" class="text-danger mt-2" style="display: none;"></div>
+                                                                            </div>
+                                                                            <input type="text" value="misSolicitudes" name="ubicacion" hidden>
                                                                             <button type="submit" class="btn btn-primary">Agregar Comentario</button>
                                                                         </form>
+                                                                    </div>
                                                                     <!--ASIGNACION DE DESTINATARIO -->
                                                                     {% elif evento.accion == "Asignacion de Caso" %}
                                                                         {% for interno in internos %}
