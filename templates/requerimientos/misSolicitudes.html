@@ -57,7 +57,7 @@
                                         <i class="bi bi-eye"></i>
                                     </button>
                                 </td>
-                                <!-- Modal Ver historial -->
+                                <!-- Modal  -->
                                 <div class="modal fade" id="modalVer{{ requerimiento.id }}" tabindex="-1" aria-labelledby="modalVerLabel{{ requerimiento.id }}" aria-hidden="true">
                                     <div class="modal-dialog modal-lg">
                                         <div class="modal-content">
@@ -131,48 +131,46 @@
                                                 </ul>
                                                 <h6>Comentarios:</h6>
                                                 <div class="comentarios-container" style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 20px;">
-                                                    <div class="list-group" id="comentariosContainer">
+                                                    <div class="list-group">
                                                         {% for comentario in comentarios %}
                                                             {% if comentario.idRequerimiento == requerimiento.id %}
-                                                            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                                                                <div class="d-flex w-100 justify-content-between">
-                                                                    <h5 class="mb-1">{{ comentario.asunto }}</h5>
-                                                                    <small class="text-muted">{{ comentario.fechaYhora.strftime('%Y-%m-%d %H:%M') }}</small>
+                                                                <div class="list-group-item list-group-item-action flex-column align-items-start mb-2">
+                                                                    <div class="d-flex w-100 justify-content-between">
+                                                                        <h5 class="mb-1">{{ comentario.asunto }}</h5>
+                                                                        <small class="text-muted">{{ comentario.fechaYhora.strftime('%Y-%m-%d %H:%M') }}</small>
+                                                                    </div>
+                                                                    <p class="mb-1">{{ comentario.descripcion }}</p>
+                                                                    <h6>Archivos Adjuntos:</h6>
+                                                                    <ul class="list-unstyled">
+                                                                        {% if comentario.archivos == [] %}
+                                                                            <li>No hay archivos cargados</li>
+                                                                        {% else %}
+                                                                            {% for archivo in comentario.archivos %}
+                                                                                <li>
+                                                                                    <a href="{{ url_for('archivo.servir_archivo', nombre_archivo=archivo.nombre) }}" target="_blank">
+                                                                                        {{ archivo.nombre.split('_', 1)[1] }}
+                                                                                    </a>
+                                                                                </li>
+                                                                            {% endfor %}
+                                                                        {% endif %}
+                                                                    </ul>
+                                                                    <small class="text-muted">Enviado por:
+                                                                        {% if comentario.tipoUsuario == "Externo" %}
+                                                                            {% for externo in externos %}
+                                                                                {% if externo.id == comentario.idUsuarioEmisor %}
+                                                                                    {{ externo.nombre }}
+                                                                                {% endif %}
+                                                                            {% endfor %}
+                                                                        {% endif %}
+                                                                        {% if comentario.tipoUsuario == "Interno" %}
+                                                                            {% for interno in internos %}
+                                                                                {% if interno.id == comentario.idUsuarioEmisor %}
+                                                                                    {{ interno.nombre }}
+                                                                                {% endif %}
+                                                                            {% endfor %}
+                                                                        {% endif %}
+                                                                    </small>
                                                                 </div>
-                                                                <p class="mb-1">{{ comentario.descripcion }}</p>
-                                                                <h6>Archivos Adjuntos:</h6>
-                                                                <ul id="listaArchivosAdjuntos">
-                                                                    {% if comentario.archivos == [] %}
-                                                                        <p>No hay archivos cargados</p>
-                                                                    {% endif %}
-                                                                    {% if comentario.archivos != [] %}
-                                                                        {% for archivo in comentario.archivos %}
-                                                                            <li>
-                                                                                <a href="{{ url_for('archivo.servir_archivo', nombre_archivo=archivo.nombre) }}" target="_blank">
-                                                                                    {{ archivo.nombre.split('_', 1)[1] }}
-                                                                                </a>
-                                                                            </li>
-                                                                        {% endfor %}
-                                                                        <br>
-                                                                    {% endif %}    
-                                                                </ul>
-                                                                <small class="text-muted">Enviado por:
-                                                                    {% if comentario.tipoUsuario == "Externo" %} 
-                                                                        {% for externo in externos %}
-                                                                            {% if externo.id == comentario.idUsuarioEmisor %}
-                                                                                {{ externo.nombre }}
-                                                                            {% endif %}
-                                                                        {% endfor %}
-                                                                    {% endif %}
-                                                                    {% if comentario.tipoUsuario == "Interno" %} 
-                                                                        {% for interno in internos %}
-                                                                            {% if interno.id == comentario.idUsuarioEmisor %}
-                                                                                {{ interno.nombre }}
-                                                                            {% endif %}
-                                                                        {% endfor %}
-                                                                    {% endif %}
-                                                                </small>
-                                                            </a>
                                                             {% endif %}
                                                         {% endfor %}
                                                     </div>
@@ -212,7 +210,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!--Fin modal Ver historial-->
+                                <!--Fin modal-->
                             </tr>
                             {% endfor %}
                         </tbody>
